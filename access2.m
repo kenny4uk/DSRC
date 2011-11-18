@@ -1,0 +1,35 @@
+%
+% 
+% access.m
+%
+% This function sets positions of the access points.
+%
+%%
+%
+
+function [out] =  access2()
+
+accessinfo(1, 1) = 0.0;
+accessinfo(1, 2) = 0.0;
+accessinfo(2, 1) = -0.5*sqrt(3.0);
+accessinfo(2, 2) = 1.5;
+accessinfo(3, 1) = -sqrt(3.0);
+accessinfo(3, 2) = 0.0;
+accessinfo(4, 1) = -0.5*sqrt(3.0);
+accessinfo(4, 2) = -1.5;
+accessinfo(5, 1) = 0.5*sqrt(3.0);
+accessinfo(5, 2) = -1.5;
+accessinfo(6, 1) = sqrt(3.0);
+accessinfo(6, 2) = 0.0;
+accessinfo(7, 1) = 0.5*sqrt(3.0);
+accessinfo(7, 2) = 1.5;
+accessinfo(8, 1) = 0.0;
+accessinfo(8, 2) = 3.0;
+accessinfo(9, 1) = -sqrt(3.0);
+accessinfo(9, 2) = 3.0;
+accessinfo(10, 1) = -1.5*sqrt(3.0);
+accessinfo(10, 2) = 1.5;
+out = accessinfo;
+plot (accessinfo(:,1),accessinfo(:,2),'+')
+print -depsc access_point_Position.eps
+%******* end of file *********
