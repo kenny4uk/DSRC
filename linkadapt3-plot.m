@@ -1,12 +1,4 @@
-% function plot_results
-
-% close all;
-
-%% define the strings used for plot lines.
-symbol_plot='sd^vph><+xo*sd^vph><+xo*sd^vph><+xo*'; %% one character represent one plot symbol;
-len_symbol=length(symbol_plot);
-style_plot='- --: -.'; %% two character represent one line style;
-color_plot='k b g c m y r';
+ c m y r';
 font_size=16; line_width=1.6;
 
 for idx_period=1:sPeriodset
@@ -17,7 +9,15 @@ for idx_start=1:sStart
   Rate.start=Rate.set(ceil(rand(1,Sim.n)*sRset));  
 
   Phy.snr=Phy.snr_set(idx_snr);
-  Phy.snr_per= snr_per(Phy.snr, Phy.rate_mode);
+  Phy.snr_per= snr_per(Phy.snr, Phy.rate_mode);% function plot_results
+
+% close all;
+
+%% define the strings used for plot lines.
+symbol_plot='sd^vph><+xo*sd^vph><+xo*sd^vph><+xo*'; %% one character represent one plot symbol;
+len_symbol=length(symbol_plot);
+style_plot='- --: -.'; %% two character represent one line style;
+color_plot='k b g
   
   Arf.sc_min=10; Arf.sc_max=10; Arf.sc_multi=2; 
   Onoe.ratedec_retthr=0.5; %1 default           % variable for onoe, threshold to decrease rate based on retries per pk in a observation window.

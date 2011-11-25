@@ -13,7 +13,7 @@ for idx_period=1:sPeriodset
 for idx_snr=1: sSnr    
 for idx_start=1:sStart    
     
-  Sim.n=cars(idx_node);                       % number of cars on network
+  Sim.n=Sim.node_set(idx_node);                      % number of nodes on network
   Rate.start=Rate.set(ceil(rand(1,Sim.n)*sRset));  
 
   Phy.snr=Phy.snr_set(idx_snr);
@@ -66,7 +66,7 @@ for idx_start=1:sStart
       
        legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);
       set(gca, 'FontSize', font_size, 'LineWidth', line_width);     
-      if bl_epssave==1;    eval(['print -deps ' epsname 'through-sim_onoe-node' num2str(max(cars)) ...
+      if bl_epssave==1;    eval(['print -deps ' epsname 'through-sim_onoe-node' num2str(max(Sim.node_set)) ...
               '-period' num2str(Onoe.period_set(idx_period)*10) '-start' num2str(Startrate_mode(idx_start)) ] ); end;       
   end
 
@@ -87,7 +87,7 @@ for idx_start=1:sStart
      legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);  
     
       set(gca, 'FontSize', font_size, 'LineWidth', line_width);     
-      if bl_epssave==1;    eval(['print -deps ' epsname 'through-aarf-node' num2str(max(cars)) ...
+      if bl_epssave==1;    eval(['print -deps ' epsname 'through-aarf-node' num2str(max(Sim.node_set)) ...
               '-period' num2str(Onoe.period_set(idx_period)*10) '-start' num2str(Startrate_mode(idx_start)) ] ); end;                    
   end
 end % for idx_start  
