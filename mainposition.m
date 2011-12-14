@@ -12,18 +12,16 @@ warning off;           % some annoying, but harmless warnings
 hh=datevec(now);
 
 par_config;
-%cars=8;
-%cars=100;
-%sNode=length(cars);
-AP=200;
-R=400;
-v=100;
+
+%AP=500;
+%R=1000;
+%v=100;
 %[xpos,ypos] = randpos(cars,R)
 %[out] = access1
-Sim.iternum0=2; % number of iterations for a fixed simulation scenario.
-Sim.iternum1=2 ; % number of iterations for a fixed simulation scenario.
+Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
+Sim.iternum1=4 ; % number of iterations for a fixed simulation scenario.
 %Sim.node_set=[1:2:15];
-Sim.node_set=[1:10];
+Sim.node_set=[1:40];
 %Sim.node_set=[1:10:30];
 %Sim.node_set=[1:10:200];
 sNode=length(Sim.node_set);
@@ -38,7 +36,7 @@ epsname=matname;
 bl_matsave=1;
 bl_epssave=1; 
 
-App.lave=200;      % the average packet length
+App.lave=500;      % the average packet length
 
 % SNR and PER 
 %Phy.snr_set=[15:10:25];
