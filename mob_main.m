@@ -16,7 +16,7 @@ par_config;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 %Sim.node_set=[1:2:15];
-Sim.node_set=[1:50];
+Sim.node_set=[1:10];
 
       %Sim.node_set=[1:10:30];
 %Sim.node_set=[1:10:200];
@@ -27,12 +27,14 @@ Sim.cal_onoe=1;
 Sim.debug_onoe_sim=0;
 Sim.debug_onoe_mod=0;
 x_max=1000;
-v=ones(1,50)*50+rand(1,50)*20;
-      t=20;
-      old_pos=rand(1,50)*x_max;
-   p_mob(t, v, old_pos);
-
-matname= [num2str(hh(1)) '-' num2str(hh(2)) '-'  num2str(hh(3)) '-'  num2str(hh(4)) '-'  num2str(hh(5))  '-linkadapt'] ;
+v=ones(1,10)*50+rand(1,10)*20;
+      t=10;
+      old_pos=rand(1,10)*x_max;
+         new_pos=p_mob(t, v, old_pos);
+          for i=1:sNode
+          old_pos=new_pos;
+      end
+matname= [num2str(hh(1)) '-' num2str(hh(2)) '-'  num2str(hh(3)) '-'  num2str(hh(4)) '-'  num2str(hh(5))  '-linkadaptmob'] ;
 epsname=matname;
 bl_matsave=1;
 bl_epssave=1; 
@@ -131,10 +133,10 @@ for idx_start=1:sStart
           disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
          alg_aarf1();
-       v=ones(1,50)*50+rand(1,50)*20;
-      t=20;
-      old_pos=rand(1,50)*x_max;
-   p_mob(t, v, old_pos);
+       v=ones(1,10)*50+rand(1,10)*20;
+      t=10;
+      old_pos=rand(1,10)*x_max;
+   new_pos=p_mob(t, v, old_pos);
            thr_aarf_iter(idx_iter)=mobile.through;
           eneff_aarf_iter(idx_iter)=mobile.energyeff;
           col_aarf_iter(idx_iter)=mobile.pk_col;
@@ -155,10 +157,10 @@ for idx_start=1:sStart
           disp(['Simulation ONOE: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
 alg_onoe1();
-     v=ones(1,50)*50+rand(1,50)*20;
-      t=20;
-      old_pos=rand(1,50)*x_max;
-   p_mob(t, v, old_pos);
+     v=ones(1,10)*50+rand(1,10)*20;
+      t=10;
+      old_pos=rand(1,10)*x_max;
+   new_pos=p_mob(t, v, old_pos);
           thr_onoe_iter(idx_iter)=mobile.through;
          eneff_onoe_iter(idx_iter)=mobile.energyeff;          
           col_onoe_iter(idx_iter)=mobile.pk_col;
@@ -177,10 +179,10 @@ alg_onoe1();
   end % for idx_iter
 
   if Sim.cal_aarf
-      v=ones(1,50)*50+rand(1,50)*20;
-      t=20;
-      old_pos=rand(1,50)*x_max;
-   p_mob(t, v, old_pos);
+      v=ones(1,10)*50+rand(1,10)*20;
+      t=10;
+      old_pos=rand(1,10)*x_max;
+   new_pos=p_mob(t, v, old_pos);
       thr_aarf(idx_node, idx_snr, idx_start)= mean(thr_aarf_iter);
       eneff_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_aarf_iter);      
       col_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(col_aarf_iter);
@@ -214,10 +216,10 @@ alg_onoe1();
   end
   
   if Sim.cal_onoe
-     v=ones(1,50)*50+rand(1,50)*20;
-      t=20;
-      old_pos=rand(1,50)*x_max;
-   p_mob(t, v, old_pos);
+     v=ones(1,10)*50+rand(1,10)*20;
+      t=10;
+      old_pos=rand(1,10)*x_max;
+   new_pos=p_mob(t, v, old_pos);
       thr_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(thr_onoe_iter);
       eneff_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_onoe_iter);      
       col_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(col_onoe_iter);
