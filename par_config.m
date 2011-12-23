@@ -7,7 +7,7 @@ Pstat='constant';           % packet length statistics
 %Pstat='uniform';               
 %Pstat='exponential';
 
-Lave=200;   % the average packet length used in [2]
+Lave=500;   % the average packet length used in [2]
 %Lave=600;   % the average packet length used in [2]
 
 Mac.m= inf;     % infinite retransmissions are allowed 
@@ -23,16 +23,27 @@ HPHY = 192;
 HEADER = HMAC+HPHY;
 
 DIFS = 50;         %DIFS length [# bits at the basic rate]    
-SIFS = 10;         %SIFS length [# bits at the basic rate]
+%SIFS = 10;         %SIFS length [# bits at the basic rate]
+SIFS = 32;         %SIFS length [# bits at the basic rate]
 
 ACK  = 112 + HPHY;      % ACK length
 RTS  = 160 + HPHY;       % RTS length
 CTS  = 112 + HPHY;       % CTS length 
 
-Phy.sigma= 20e-6;        % slot time
-Mac.Wmin=64;               % basic contention window dimension
-Mac.m=5;
+%Phy.sigma= 20e-6;        % slot time
+
+Phy.sigma= 13e-6;        % slot time
+%Mac.Wmin=64;               % basic contention window dimension
+%Mac.m=5;
+Mac.Wmin=7;               % basic contention window dimension
+Mac.m=225;
+AIFS=6;
+%Mac.Wmin=7;               % basic contention window dimension
+%Mac.m=15;
+%AIFS=6;
 Mac.Wmax=Mac.m*Mac.Wmin;   % number of backoff stages
+
+
 
 switch Amode 
 case 'BASIC', 

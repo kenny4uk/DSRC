@@ -38,6 +38,12 @@ while sum([Pk.suc])<=Sim.pk,
       Sim.time= Sim.time + maxTc;              % and update the simulation time subsequently
       Mac.nRetry(Txnode)= Mac.nRetry(Txnode)+1;        % Add a collision to the number of successive collisions experienced by colliding packets
       
+       v=ones(1,20)*50+rand(1,20)*20;
+      t=10;
+      old_pos=rand(1,20)*x_max;
+   new_pos=p_mob(t, v, old_pos);
+          
+      
          
                  
       elseif sTxnode==1
@@ -118,6 +124,12 @@ while sum([Pk.suc])<=Sim.pk,
                 Arf.sc_thr(iTx)=Arf.sc_min;
             end
             Arf.Brecover(iTx)=0;
+            
+             v=ones(1,20)*50+rand(1,20)*20;
+      t=10;
+      old_pos=rand(1,20)*x_max;
+   new_pos=p_mob(t, v, old_pos);
+          
         end % Rate.curr<Rate.max
         check_more_pk=1;
       else % if St_tx(Txnode...
