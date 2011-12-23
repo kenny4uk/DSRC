@@ -27,10 +27,10 @@ for idx_start=1:sStart
 
   for idx_node=1:sNode
       if Sim.cal_aarf
-       v=ones(1,50)*50+rand(1,50)*20;
-      t=20;
-      old_pos=rand(1,50)*x_max;
-   p_mob(t, v, old_pos);
+       v=ones(1,10)*50+rand(1,10)*20;
+      t=10;
+      old_pos=rand(1,10)*x_max;
+   new_pos=p_mob(t, v, old_pos);
       plot_thr_aarf(idx_node)=thr_aarf(idx_node, idx_snr, idx_period, idx_start);
       plot_col_aarf(idx_node)=col_aarf(idx_node, idx_snr, idx_period, idx_start);
       plot_suc_aarf(idx_node)=suc_aarf(idx_node, idx_snr, idx_period, idx_start);
@@ -43,10 +43,10 @@ for idx_start=1:sStart
       end
       
       if Sim.cal_onoe
-      v=ones(1,50)*50+rand(1,50)*20;
-      t=20;
-      old_pos=rand(1,50)*x_max;
-   p_mob(t, v, old_pos);
+      v=ones(1,10)*50+rand(1,10)*20;
+      t=10;
+      old_pos=rand(1,10)*x_max;
+   new_pos=p_mob(t, v, old_pos);
       plot_thr_onoe(idx_node)=thr_onoe(idx_node, idx_snr, idx_period, idx_start);
       plot_col_onoe(idx_node)=col_onoe(idx_node, idx_snr, idx_period, idx_start);
       plot_suc_onoe(idx_node)=suc_onoe(idx_node, idx_snr, idx_period, idx_start);
@@ -65,14 +65,14 @@ for idx_start=1:sStart
       %plot([ploss], plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
       hold on;      grid on;
      %plot(pk_per_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-      plot(plot_suc_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-      %plot(plot_eneff_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+      %plot(plot_suc_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+     plot( Sim.node_set,plot_eneff_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
       %plot(plot_delay_aarf, plot_thr_aarf, ['g' symbol_plot( rem(idx_snr,len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
       hold on;      grid on;
       %xlabel('collided packets');   ylabel('Throughput');
      % xlabel('packet error rate');   ylabel('Throughput');
-      %xlabel('energyeff');  ylabel('Throughput');
-     xlabel('success');   ylabel('Throughput');
+      ylabel('Energy efficiency');   xlabel('number of vehicles');
+     %xlabel('success');   ylabel('Throughput');
       
        legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);
       set(gca, 'FontSize', font_size, 'LineWidth', line_width);     
@@ -86,14 +86,14 @@ for idx_start=1:sStart
       %plot([ploss], plot_thr_aarf, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
       hold on;      grid on;
       %plot(per_aarf, plot_thr_aarf, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-     plot(plot_suc_aarf, plot_thr_aarf, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-      %plot(plot_eneff_aarf, plot_thr_aarf, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+     %plot(plot_suc_aarf, plot_thr_aarf, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+      plot(Sim.node_set,plot_eneff_aarf, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
       %plot(plot_delay_aarf, plot_thr_aarf, ['g' symbol_plot( rem(idx_snr,len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
             hold on;      grid on;
       %xlabel('collided packets');      ylabel('Throughput');
       %xlabel('packet error rate');   ylabel('Throughput');
-    %xlabel('enerfyeff');  ylabel('Throughput');
-      xlabel('success');   ylabel('Throughput');
+      ylabel('energy efficieny');  xlabel('number of vehicles');
+      %xlabel('success');   ylabel('Throughput');
      legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);  
     
       set(gca, 'FontSize', font_size, 'LineWidth', line_width);     
