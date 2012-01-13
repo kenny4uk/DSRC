@@ -1,7 +1,7 @@
- function alg_onoe1
+function alg_onoe1
 
 global Sim App Mac Phy Rate Arf Onoe;
-global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per mobile;
+global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per Static;
 
 par_init;
 
@@ -9,10 +9,11 @@ par_init;
   Sim.tstart = clock;
   Sim.time = 0.0;                  % simulation time 
   Sim.ratetime=0.0;
-   x_max=1000;% maximum range of within which nodes can transmit
-  max_speed= 70;
-min_speed= 50;
-ap=[500 0];% position of the ap
+  t=0;
+x_max=1000;
+v=0;
+old_pos=0;
+Phy.Ts=0.0;
  
   while sum([Pk.suc])<=Sim.pk,
 %       Rate.level
@@ -68,15 +69,14 @@ ap=[500 0];% position of the ap
       end; % if rem...
 
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
+      Phy.Ts=0.0001;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
       Sim.time = Sim.time+ dt_temp*Phy.sigma;       % update the simulation time accordingly
-  v=ones(1,20)*50+rand(1,20)*20;
-      t=10;
-      old_pos=rand(1,20)*x_max;
-   new_pos=p_mob(t, v, old_pos);
       sTxnode = length(Txnode);                                       % sTxnode = number of simultaneously transmitting nodes
+       w=p_mob(Phy.Ts,v,old_pos,x_max);
       Pk.tx(Txnode)=Pk.tx(Txnode)+1;
+      old_pos=w;
       Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;      
       
       % we distringuish two possible events at this slot time 
@@ -89,58 +89,38 @@ ap=[500 0];% position of the ap
         Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;
         maxTc=max(Phy.Tc(Txnode));                  % we need to know how long the collision is going to last 
         Sim.time= Sim.time + maxTc;                   % and update the simulation time subsequently
-  v=ones(1,20)*50+rand(1,20)*20;
-      t=10;
-      old_pos=rand(1,20)*x_max;
-   new_pos=p_mob(t, v, old_pos);
-            
-            
       elseif sTxnode==1
-          
         % process BER and check if pkt can be accepted due to ber.
         Bper=0; 
         Per_temp= Phy.snr_per(Rate.level(Txnode)); 
-        
         if rand()<Per_temp; Bper=1; end;
-      
-                if Bper==1
-                           
+        if Bper==1
           St.fail(Txnode)=1; 
           St.col(Txnode)=0;
-          St.per(Txnode)=1;        
+          St.per(Txnode)=1;  
+          w=p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.per(Txnode)=Pk.per(Txnode)+1;
+           old_pos=w;
 
           Phy.Tc(Txnode)=(Phy.Lc_over+8*App.lave)./Rate.curr(Txnode);                  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;          
           Sim.time = Sim.time + Phy.Tc(Txnode);                 % update the simulation time 
-          
-  v=ones(1,20)*50+rand(1,20)*20;
-      t=10;
-      old_pos=rand(1,20)*x_max;
-   new_pos=p_mob(t, v, old_pos);
-                                                   
-                  else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
+        else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
           St.fail(Txnode)=0; 
           St.col(Txnode)=0;
-          St.per(Txnode)=0;        
+          St.per(Txnode)=0;
+          Phy.Ts=0.002;
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=(Phy.Ls_over+8*App.lave)./Rate.curr(Txnode);                  % how long does it take to transmit it with success? 
           Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
-          Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
+          Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power; 
+          w=p_mob(Phy.Ts,v,old_pos,x_max);
           Sim.time= Sim.time + Phy.Ts(Txnode);            % update the simulation time 
-          
-  v=ones(1,20)*50+rand(1,20)*20;
-      t=10;
-      old_pos=rand(1,20)*x_max;
-   new_pos=p_mob(t, v, old_pos);
-                       
-          
-                 % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 
+          % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 
           App.birthtime(Txnode)= Sim.time;                    % and store the time this packet entered service
         end; % if Bper
-        
       end % if sTxnode>1
-      
+
       for ii=1:sTxnode
         iTx=Txnode(ii);
         Rate.timer(iTx)=Rate.timer(iTx)-1;
@@ -185,15 +165,12 @@ ap=[500 0];% position of the ap
 
       end % for iTx
   end; %   while sum(Pksuc)<n*mpck,...,end
-  v=ones(1,20)*50+rand(1,20)*20;
-      t=10;
-      old_pos=rand(1,20)*x_max;
-   new_pos=p_mob(t, v, old_pos);
-  mobile.pk_col = sum([Pk.col])/( sum([Pk.tx]));                  % collision probability
- mobile.pk_suc = sum([Pk.suc])/( sum([Pk.tx]));                  % collision probability
-  mobile.pk_per = sum([Pk.per])/( sum([Pk.tx]));                  % collision probability  
-  mobile.through=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
-  mobile.energyeff=sum([Pk.power])/sum([Pk.bit]);            % average energy efficiency.
+
+ Static.pk_col = sum([Pk.col])/( sum([Pk.tx]));                  % collision probability
+ Static.pk_suc = sum([Pk.suc])/( sum([Pk.tx]));                  % collision probability
+ Static.pk_per = sum([Pk.per])/( sum([Pk.tx]));                  % collision probability  
+ Static.through=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
+ Static.energyeff=sum([Pk.power])/sum([Pk.bit]);            % average energy efficiency.
   
   if Sim.debug_onoe_sim==1
       figure(2);  
