@@ -31,7 +31,7 @@ for idx_node=1:sNode
         plot_thr_aarf(idx_node)=thr_aarf(idx_node, idx_snr, idx_period, idx_start);
       plot_col_aarf(idx_node)=col_aarf(idx_node, idx_snr, idx_period, idx_start);
       plot_suc_aarf(idx_node)=suc_aarf(idx_node, idx_snr, idx_period, idx_start);
-      plot_per_aarf(idx_node)=per_aarf(idx_node, idx_snr, idx_period, idx_start);
+%       plot_per_aarf(idx_node)=per_aarf(idx_node, idx_snr, idx_period, idx_start);
       %plot_delay_aarf(idx_node)=per_aarf(idx_node, idx_snr, idx_period, idx_start);
      %plot_per_aarf(idx_node)=per_aarf(idx_node, idx_snr, idx_period, idx_start);
       %plot_p_loss_aarf(idx_node)=p_loss_aarf(idx_node, idx_snr, idx_period, idx_start);
@@ -77,7 +77,7 @@ for idx_node=1:sNode
    if Sim.cal_aarf
       fig_org=300;
       figure(fig_org+idx_start);
-      plot(Sim.node_set, plot_thr_aarf, ['k' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
+      plot(Sim.node_set, plot_thr_aarf, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
       hold on;      grid on;
       ylabel('Throughput');      xlabel('Number of vehicles');
 %      legend(['SNR: ' num2str(Phy.snr_set(2))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);

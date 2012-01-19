@@ -1,18 +1,12 @@
-function aarf
+function alg_aarf
 
 global Sim App Mac Phy Rate Arf Onoe;
-global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per mobile;
+global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per Static;
  
 par_init;
-%[pathloss] = p_loss(cars,xpos,ypos);
-%[xpos,ypos] = randpos(cars,R);
 % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
-%vn=1:50;
-%tn=1:50;
-%dn=1:50;
-%[result]=calculate_position(vn,tn,dn)
 Sim.tstart = clock;
-Sim.time = 0:0;                  % simulation time 
+Sim.time = 0;                  % simulation time 
 while sum([Pk.suc])<=Sim.pk,
     if (rem(sum([Pk.tx]),10000)==0) & 0,
         deltaT = etime(clock,Sim.tstart);
@@ -36,38 +30,20 @@ while sum([Pk.suc])<=Sim.pk,
       maxTc=max(Phy.Tc(Txnode));                  % we need to know how long the collision is going to last 
       Sim.time= Sim.time + maxTc;              % and update the simulation time subsequently
       Mac.nRetry(Txnode)= Mac.nRetry(Txnode)+1;        % Add a collision to the number of successive collisions experienced by colliding packets
-      
-      Range=400;
-      ap=[200 0];
-      %nodesNum=[1:3];
-      Sim.node_set=[1:10];
-      sNode=length(Sim.node_set);
-      nodeID=3  paraNode = kmobility(Range, ap,sNode,nodeID)
-    
-   
-                 
-      elseif sTxnode==1
+    elseif sTxnode==1
       % process BER and check if pkt can be accepted due to ber.
       Bper=0; 
-      Per_temp= Phy.snr_per(Rate.level(Txnode)); 
-      if rand()<Per_temp; Bper=1; end;
-            if Bper==1
+      %Per_temp= Phy.snr_per(Rate.level(Txnode)); 
+      %if rand()<Per_temp; Bper=1; end;
+      if Bper==1
         St.fail(Txnode)=1; 
         St.col(Txnode)=0;
         St.per(Txnode)=1;        
         Pk.per(Txnode)=Pk.per(Txnode)+1;
- 
+
           Phy.Ts(Txnode)=(Phy.Lc_over+8*App.lave)./Rate.curr(Txnode);                  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;                    
           Sim.time = Sim.time + Phy.Ts(Txnode);                 % update the simulation time 
-                    
-
-
-
-%------------------------------------------------------------------
-
-
-
       else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
         St.fail(Txnode)=0; 
         St.col(Txnode)=0;
@@ -79,17 +55,12 @@ while sum([Pk.suc])<=Sim.pk,
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
           
           Sim.time = Sim.time + Phy.Ts(Txnode);                 % update the simulation time 
-          
-          
-                   
-         
           % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 
           App.birthtime(Txnode) = Sim.time;                       % and store the time this packet entered service
       end; % if Bper
-      
     end % if sTxnode>1
     
-           for ii=1:sTxnode
+    for ii=1:sTxnode
       iTx=Txnode(ii);
       Rate.timer(iTx)=Rate.timer(iTx)-1;
       Trace_rate(iTx).list=[Trace_rate(iTx).list Rate.level(iTx)];
@@ -164,12 +135,11 @@ while sum([Pk.suc])<=Sim.pk,
     end % for iTx
 end; %   while sum(Pksuc)<n*mpck,...,end
 
- mobile.pk_col = sum([Pk.col])/( sum([Pk.tx]));                  % collision probability
- mobile.pk_suc = sum([Pk.suc])/( sum([Pk.tx]));                  % collision probability
- mobile.pk_per = sum([Pk.per])/( sum([Pk.tx]));                  % collision probability
-% mobile.pk_delay = sum([Pk.delay])/( sum([Pk.tx]));                  % collision probability  
- mobile.through=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
- mobile.energyeff=sum([Pk.power])/sum([Pk.bit]);            % average energy efficiency.
+Static.pk_col = sum([Pk.col])/( sum([Pk.tx]));                  % collision probability
+Static.pk_suc = sum([Pk.suc])/( sum([Pk.tx]));                  % collision probability
+Static.pk_per = sum([Pk.per])/( sum([Pk.tx]));                  % collision probability  
+Static.through=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
+Static.energyeff=sum([Pk.power])/sum([Pk.bit]);            % average energy efficiency.
 
 if 0
     figure(1); for ii=1:Sim.n; plot(Trace_rate(ii).list); hold on; end; hold off;
