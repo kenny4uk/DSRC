@@ -19,8 +19,8 @@ par_config_all;
 % Sim.iternum=1; % number of iterations for a fixed simulation scenario.
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
-Sim.pk_basic=10000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:50];
+Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
+Sim.node_set=[1:40];
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
 
@@ -39,15 +39,15 @@ bl_epssave=1;
 App.lave=1500;      % the average packet length in bytes used in [2]
 
 % SNR and PER 
-Phy.snr_set=[5:15:35];
+Phy.snr_set=[5 10 15 20];
 % Phy.snr_set=[55];
 sSnr=length(Phy.snr_set);
 
 Phy.rate_mode=[1 3 5 6 7]; 
 % Phy.rate_mode=[5]; 
-Phy.power=10^5; % normalized transmit power, 1 Watt.
+Phy.power=40*10^(-3); % normalized transmit power in  Watt(40mW).
 
-Rate.all=[3 6 9 24 27]*1e6; 
+Rate.all=[3 12 18 24 27]*1e6; 
 % Rate.set=54e6;
 Rate.set=Rate.all;
 sRset=length(Rate.set);

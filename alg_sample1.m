@@ -1,4 +1,4 @@
-function alg_sample1
+function alg_sample
 
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
@@ -14,7 +14,7 @@ Sample.num_rate=length(Sample.rates); % num of tx rate and bit rate.
 Sample.sample_time=10/100; % 10% of transmission time used for sampling, sending at a different bit-rate.
 Sample.stale_failure_timeout=10; % stale consecutive 4 failures timeout 10 seconds;
 Sample.min_switch=1; % minimal switch time 1 second.
-Sample.smoothing_rate=0.95; % ewma percentage (out of 100) 
+Sample.smoothing_rate=0.95; % ewma percentage (out of 100), exponentially weighted moving average(ewma)  
 Sample.rate_first_series=3; % set up the transmit rate for first serier of transmissions with the sampling rate. the remaining rate set to the lowest one.
 
   % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
@@ -62,7 +62,7 @@ end
       
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
       v=50;
-  old_pos=rand(1,50)*1000;
+  old_pos=rand(1,40)*1000;
   Phy.Ts=20;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 

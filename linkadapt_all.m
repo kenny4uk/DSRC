@@ -7,7 +7,7 @@ symbol_plot='sd^vph><+xo*sd^vph><+xo*sd^vph><+xo*'; %% one character represent o
 len_symbol=length(symbol_plot);
 style_plot='- --: -.'; %% two character represent one line style;
 color_plot='k b g c m y r';
-font_size=13; line_width=1.6;
+font_size=16; line_width=1.6;
 
 for idx_period=1:sPeriodset
 for idx_snr=1:sSnr    
@@ -69,7 +69,7 @@ for idx_node=1:sNode
       hold on;      grid on;
       xlabel('Number of nodes');   ylabel('System throughput (bits/second)');
       % pause;
-      %legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))]);
+      legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);
   end
 
 %   if Sim.cal_aarf
