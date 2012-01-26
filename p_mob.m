@@ -1,15 +1,8 @@
 function new_pos=p_mob(t,v,old_pos,x_max)
-n=length(old_pos);
-p_max=rand(1)*x_max;
-for i=1:n
-new_pos(i)=old_pos(i)+v*t;
- if new_pos(i)>p_max
- new_pos(i)=new_pos(i)-p_max;
-  else
-  if new_pos(i)<p_max
- new_pos(i)=new_pos(i)+x_max;
-        end
-    end
-end
+% n=length(old_pos);
+new_pos=old_pos+v*t;
+  new_pos=new_pos-(new_pos>x_max)*x_max;% This gives the new positon if current position is greates than x_max
+ new_pos=new_pos+(new_pos<0)*x_max;%This gives the new positon if current position is less than x_max
+  end
 
  

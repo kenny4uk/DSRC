@@ -10,18 +10,15 @@ rand('state',sum(100*clock)); % randomize properly (even when compiled)
 warning off;           % some annoying, but harmless warnings
 
 hh=datevec(now);
-par_config_all;
-%%
- Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
+
+par_config;
+
+Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
-x_max=1000;
-[out] =  access1();
-x_max=access1()/2;
-Sim.node_set=[1:50];
+%Sim.node_set=[1:2:15];
+Sim.node_set=[1:20];
 sNode=length(Sim.node_set);
-%[xpos,ypos] = randpos(sNode,x_max)
-%[xpos,ypos] = rand_pos_mob(Sim.node_set,Phy.Ts,v,old_pos,x_max)
-Sim.pk_basic=5000;     % Total number of packets to be successfully sent per simulation
+Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
 Sim.cal_aarf=1; 
 Sim.cal_onoe=1;
 Sim.debug_onoe_sim=0;
@@ -30,32 +27,32 @@ matname= [num2str(hh(1)) '-' num2str(hh(2)) '-'  num2str(hh(3)) '-'  num2str(hh(
 epsname=matname;
 bl_matsave=1;
 bl_epssave=1; 
+
 App.lave=1000;      % the average packet length
 
 % SNR and PER 
 Phy.snr_set=[5 10 15 20];
 sSnr=length(Phy.snr_set);
 Phy.rate_mode=[1 3 5 6 7 ]; 
-% Phy.power=10^5; % normalized transmit power, 1 Watt.
-% Ptb = 40*10^(-3);   % low Transmitted Power in 40mW
-% Phy.power = 10 * log10 (Ptb); % Transmitted Power  in dB
-Phy.power = 40*10^(-3); 
-Height_rx=1.8; % Height of AP;
-%dist = (xpos.^2 + ypos.^2) .^ (1/2);
-Rate.all=[3 9 12 24 27]*1e6; 
+%Phy.power=10^5; % normalized transmit power, 1 Watt.
+Phy.power=40*10^(-3); % normalized transmit power in  Watt(40mW).
+
+Rate.all=[3 12 18 24 27]*1e6; 
 Rate.set=Rate.all;
 sRset=length(Rate.set);
 Rate.num=sRset;
 Rate.min=min(Rate.set); Rate.max=max(Rate.set);
 Rate.level_max=sRset;
+
 Startrate_mode=[3 5]; % 0: random; >0: fixed data rate
 Startrate_mode=[4]; % 0: random; >0: fixed data rate
 sStart=length(Startrate_mode);
+
 Arf.sc_min=10; Arf.sc_max=10; Arf.sc_multi=2; 
 Onoe.ratedec_retthr=0.5;           % 1 default           % variable for onoe, threshold to decrease rate based on retries per pk in a observation window.
 Onoe.rateinc_creditthr=10;      % variable for onoe, thresh on the credits to increase rate.
 Onoe.creditinc_retthr=0.1;      % variable for onoe, thresh on percentage of pks requiring retry to increase or decrease a credit.
-Onoe.period=1;         % observation time: 1 sec in defaul.
+Onoe.period=1;                         % observation time: 1 sec in defaul.
 Onoe.chn_busy=1;
 Onoe.period_set=[0.2];
 % Onoe.period_set=[1 0.5 0.2];
@@ -66,11 +63,13 @@ for idx_snr=1:sSnr
 for idx_start=1:sStart    
 
     Onoe.period=Onoe.period_set(idx_period);
-     Sim.n=Sim.node_set(idx_node);  % number of nodes in the BSS
+     Sim.n=Sim.node_set(idx_node);                      % number of nodes in the BSS
     Onoe.chn_busy_small=1;
-    Sim.pk=ceil(sqrt(Sim.n)*Sim.pk_basic);  % Total number of packets sent per simulation    
+    Sim.pk=ceil(sqrt(Sim.n)*Sim.pk_basic);     % Total number of packets sent per simulation    
+  
     Phy.snr=Phy.snr_set(idx_snr);
-    %Phy.snr_per= snr_per(Phy.snr, Phy.rate_mode);
+    Phy.snr_per= snr_per(Phy.snr, Phy.rate_mode);
+
   if Startrate_mode(idx_start)>0; iter_num=Sim.iternum1; else; iter_num= Sim.iternum0; end;  
   thr_aarf_iter=zeros(1, iter_num);
   eneff_aarf_iter=zeros(1,iter_num);
@@ -96,6 +95,7 @@ for idx_start=1:sStart
 %   pk_per_onoe_iter=zeros(1, iter_num); 
 %   pk_p_loss_onoe_iter=zeros(1, iter_num);
   %pk_delay_onoe_iter=zeros(1, iter_num); 
+  
    
       
   for idx_iter=1: iter_num
@@ -113,11 +113,12 @@ for idx_start=1:sStart
           Rate.startrate_prob=zeros(1,Rate.num); Rate.startrate_prob(Startrate_mode(idx_start))=1;
       end
       
+
       if Sim.cal_aarf
           disp('---------------------------------------------------------------')
           disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
-       alg_aarf1();
+       alg_aarf();
          thr_aarf_iter(idx_iter)=Static.through;
           eneff_aarf_iter(idx_iter)=Static.energyeff;
           col_aarf_iter(idx_iter)=Static.pk_col;
@@ -169,7 +170,8 @@ for idx_start=1:sStart
      per_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_aarf_iter); 
       %pk_delay_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_delay_aarf_iter); 
              
-                       
+             
+            
       thr_aarf_std(idx_node, idx_snr, idx_start)= std(thr_aarf_iter);
       eneff_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(eneff_aarf_iter);      
       col_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(col_aarf_iter);
@@ -237,4 +239,4 @@ disp('---------------------------------------------------------------');
 
 if bl_matsave==1;     eval( ['save ' matname]); end;
 
-linkadaptmob;
+linkadapt_plot;

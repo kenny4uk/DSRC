@@ -6,57 +6,76 @@ global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_
 par_init;
 % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
 Sim.tstart = clock;
-Sim.time = 0;                  % simulation time 
+Sim.time = 0;  
+t=0;
+x_max=1000;
+v=0;
+old_pos=0;
+Phy.Ts=0.0;
+% simulation time 
 while sum([Pk.suc])<=Sim.pk,
     if (rem(sum([Pk.tx]),10000)==0) & 0,
         deltaT = etime(clock,Sim.tstart);
         disp(['Expected time to conclusion: ',num2str(round(deltaT/sum([Pk.suc])*(Sim.pk- sum([Pk.suc])))),' sec...'])
     end; % if rem...
-    
-    dt_temp = min(Mac.Bk_cnt);                             % Txnode = IDs of the nodes that attempt the transmission
-    Txnode = find(Mac.Bk_cnt==dt_temp);          % find the time of the first transmission attempt 
-    Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
-    Sim.time= Sim.time+ dt_temp*Phy.sigma;                  % update the simulation time accordingly
-    sTxnode = length(Txnode);                        % sTxnode = number of simultaneously transmitting nodes
+    dt_temp = min(Mac.Bk_cnt);    % Txnode = IDs of the nodes that attempt the transmission
+    Phy.Ts=0.001;
+    v=20;
+    old_pos=rand(1,40)*1000;
+    Txnode = find(Mac.Bk_cnt==dt_temp);  % find the time of the first transmission attempt 
+    Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;    % all backoff counters are decremented 
+    Sim.time= Sim.time+ dt_temp*Phy.sigma; % update the simulation time accordingly
+    sTxnode = length(Txnode);  % sTxnode = number of simultaneously transmitting nodes
+     w=p_mob(Phy.Ts,v, old_pos,x_max);
+     %w = rand_pos_mob(Sim.node_set,Phy.Ts,v,sTxnode,x_max);
     Pk.tx(Txnode)=Pk.tx(Txnode)+1;
+    old_pos=w;
     
     % we distringuish two possible events at this slot time 
-    if sTxnode>1        % if sTxnode > 1 => Collision occurs
+    if sTxnode>1   % if sTxnode > 1 => Collision occurs
       St.fail(Txnode)=1; 
       St.col(Txnode)=1;
       Pk.col(Txnode) = Pk.col(Txnode)+ 1;     % total number of collided packets is updated;
       Phy.Tc(Txnode)=(Phy.Lc_over+ 8*App.lave)./Rate.curr(Txnode);
       Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;
-      maxTc=max(Phy.Tc(Txnode));                  % we need to know how long the collision is going to last 
-      Sim.time= Sim.time + maxTc;              % and update the simulation time subsequently
-      Mac.nRetry(Txnode)= Mac.nRetry(Txnode)+1;        % Add a collision to the number of successive collisions experienced by colliding packets
+      maxTc=max(Phy.Tc(Txnode));  % we need to know how long the collision is going to last 
+      Sim.time= Sim.time + maxTc;  % and update the simulation time subsequently
+      Mac.nRetry(Txnode)= Mac.nRetry(Txnode)+1; % Add a collision to the number of successive collisions experienced by colliding packets
     elseif sTxnode==1
       % process BER and check if pkt can be accepted due to ber.
       Bper=0; 
       %Per_temp= Phy.snr_per(Rate.level(Txnode)); 
-      %if rand()<Per_temp; Bper=1; end;
+     % if rand()<Per_temp; Bper=1; end;
       if Bper==1
         St.fail(Txnode)=1; 
         St.col(Txnode)=0;
-        St.per(Txnode)=1;        
-        Pk.per(Txnode)=Pk.per(Txnode)+1;
-
-          Phy.Ts(Txnode)=(Phy.Lc_over+8*App.lave)./Rate.curr(Txnode);                  % how long does it take to transmit it with success? 
+        St.per(Txnode)=1;
+        Phy.Ts=0.002;
+   v=20;  
+%   w= rand_pos_mob(Sim.node_set,Phy.Ts,v,sTxnode,x_max);
+  w=p_mob(Phy.Ts,v,old_pos,x_max)
+   Pk.per(Txnode)=Pk.per(Txnode)+1;
+   old_pos=w;
+   Phy.Ts(Txnode)=(Phy.Lc_over+8*App.lave)./Rate.curr(Txnode);  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;                    
-          Sim.time = Sim.time + Phy.Ts(Txnode);                 % update the simulation time 
+          Sim.time = Sim.time + Phy.Ts(Txnode); % update the simulation time 
       else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
         St.fail(Txnode)=0; 
         St.col(Txnode)=0;
         St.per(Txnode)=0;        
-        Pk.suc(Txnode) = Pk.suc(Txnode)+1;           % update number of sent packets          
-         
-          Phy.Ts(Txnode)=(Phy.Ls_over+8*App.lave)./Rate.curr(Txnode);                  % how long does it take to transmit it with success? 
+        Pk.suc(Txnode) = Pk.suc(Txnode)+1; % update number of sent packets 
+        Phy.Ts=0.003;
+        v=20;
+       %w = rand_pos_mob(Sim.node_set,Phy.Ts,v,old_pos,x_max)
+         w=p_mob(Phy.Ts,v,old_pos,x_max);
+          old_pos=w;
+        
+          Phy.Ts(Txnode)=(Phy.Ls_over+8*App.lave)./Rate.curr(Txnode);  % how long does it take to transmit it with success? 
           Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
-          
-          Sim.time = Sim.time + Phy.Ts(Txnode);                 % update the simulation time 
+          Sim.time = Sim.time + Phy.Ts(Txnode); % update the simulation time 
           % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 
-          App.birthtime(Txnode) = Sim.time;                       % and store the time this packet entered service
+          App.birthtime(Txnode) = Sim.time; % and store the time this packet entered service
       end; % if Bper
     end % if sTxnode>1
     
@@ -69,7 +88,6 @@ while sum([Pk.suc])<=Sim.pk,
       Trace_fail(iTx).list=[Trace_fail(iTx).list St.fail(iTx)];
       Trace_col(iTx).list=[Trace_col(iTx).list St.col(iTx)];
       Trace_per(iTx).list=[Trace_per(iTx).list St.per(iTx)];
-
       check_more_pk=0;        
       if St.fail(iTx)==0
         Arf.sc(iTx)=min(Arf.sc(iTx)+1, Arf.sc_thr(iTx));

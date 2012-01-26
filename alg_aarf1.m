@@ -19,9 +19,9 @@ while sum([Pk.suc])<=Sim.pk,
         disp(['Expected time to conclusion: ',num2str(round(deltaT/sum([Pk.suc])*(Sim.pk- sum([Pk.suc])))),' sec...'])
     end; % if rem...
     dt_temp = min(Mac.Bk_cnt);    % Txnode = IDs of the nodes that attempt the transmission
-    Phy.Ts=10;
+    Phy.Ts=0.001;
     v=20;
-    old_pos=rand(1,50)*1000;
+    old_pos=rand(1,40)*1000;
     Txnode = find(Mac.Bk_cnt==dt_temp);  % find the time of the first transmission attempt 
     Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;    % all backoff counters are decremented 
     Sim.time= Sim.time+ dt_temp*Phy.sigma; % update the simulation time accordingly
@@ -50,8 +50,8 @@ while sum([Pk.suc])<=Sim.pk,
         St.fail(Txnode)=1; 
         St.col(Txnode)=0;
         St.per(Txnode)=1;
-        Phy.Ts=30;
-   v=40;
+        Phy.Ts=0.002;
+   v=20;  
 %   w= rand_pos_mob(Sim.node_set,Phy.Ts,v,sTxnode,x_max);
   w=p_mob(Phy.Ts,v,old_pos,x_max)
    Pk.per(Txnode)=Pk.per(Txnode)+1;
@@ -64,8 +64,8 @@ while sum([Pk.suc])<=Sim.pk,
         St.col(Txnode)=0;
         St.per(Txnode)=0;        
         Pk.suc(Txnode) = Pk.suc(Txnode)+1; % update number of sent packets 
-        Phy.Ts=50;
-        v=60;
+        Phy.Ts=0.003;
+        v=20;
        %w = rand_pos_mob(Sim.node_set,Phy.Ts,v,old_pos,x_max)
          w=p_mob(Phy.Ts,v,old_pos,x_max);
           old_pos=w;
