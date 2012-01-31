@@ -27,11 +27,11 @@ for idx_node=1:sNode
   Onoe.period=0.2;                                         % observation time: 1 sec in defaul.
 
   for idx_node=1:sNode
-%       if Sim.cal_aarf
-%       plot_thr_aarf(idx_node)=thr_aarf(idx_node, idx_snr, idx_period, idx_start);
-%       plot_col_aarf(idx_node)=col_aarf(idx_node, idx_snr, idx_period, idx_start);
-%       plot_suc_aarf(idx_node)=suc_aarf(idx_node, idx_snr, idx_period, idx_start);
-%       end
+      if Sim.cal_aarf
+      plot_thr_aarf(idx_node)=thr_aarf(idx_node, idx_snr, idx_period, idx_start);
+      plot_col_aarf(idx_node)=col_aarf(idx_node, idx_snr, idx_period, idx_start);
+      plot_suc_aarf(idx_node)=suc_aarf(idx_node, idx_snr, idx_period, idx_start);
+      end
       
 %       if Sim.cal_onoe
 %       plot_thr_onoe(idx_node)=thr_onoe(idx_node, idx_snr, idx_period, idx_start);
@@ -62,15 +62,16 @@ for idx_node=1:sNode
 %       % pause;
 %       legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))]);
 %   end
-  if Sim.cal_sample
-      fig_org=100;
-      figure(fig_org+1+idx_start);
-      plot(Sim.node_set, plot_thr_sample, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
+%   if Sim.cal_sample
+%       fig_org=100;
+%       figure(fig_org+1+idx_start);
+      plot(Sim.node_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
+       plot(Sim.node_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
       hold on;      grid on;
       xlabel('Number of nodes');   ylabel('System throughput (bits/second)');
       % pause;
       %legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))]);
-  end
+%   end
 
 %   if Sim.cal_aarf
 %       fig_org=3;
@@ -80,10 +81,10 @@ for idx_node=1:sNode
 %       grid on;
 %       xlabel('Number of nodes');
 %       ylabel('Throughput');
-%   end
+ 
 
 xlabel('Number of Vehicles');   ylabel('System throughput (bits/second)');
-     legend('SampleRate');
+     legend('aarf','SampleRate');
           hold on; grid on;
 end % for idx_node
 end % for idx_start  

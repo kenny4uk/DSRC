@@ -51,13 +51,13 @@ for idx_node=1:sNode
       end
       
         if Sim.cal_sample
-       plot_thr_sample(idx_node)=thr_onoe(idx_node, idx_snr, idx_period, idx_start);
-      plot_col_sample(idx_node)=col_onoe(idx_node, idx_snr, idx_period, idx_start);
-      plot_suc_sample(idx_node)=suc_onoe(idx_node, idx_snr, idx_period, idx_start);
-       plot_pk_per_sample(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
+       plot_thr_sample(idx_node)=thr_sample(idx_node, idx_snr, idx_period, idx_start);
+      plot_col_sample(idx_node)=col_sample(idx_node, idx_snr, idx_period, idx_start);
+      plot_suc_sample(idx_node)=suc_sample(idx_node, idx_snr, idx_period, idx_start);
+%        plot_pk_per_sample(idx_node)=per_sample(idx_node, idx_snr, idx_period, idx_start);
        %plot_pk_delay_onoe(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
       %plot_p_loss_onoe(idx_node)=p_loss_onoe(idx_node, idx_snr, idx_period, idx_start);
-      plot_eneff_sample(idx_node)=eneff_onoe(idx_node, idx_snr, idx_period, idx_start);
+      plot_eneff_sample(idx_node)=eneff_sample(idx_node, idx_snr, idx_period, idx_start);
      
       end
       
@@ -87,12 +87,15 @@ for idx_node=1:sNode
 %    if Sim.cal_aarf
 %       fig_org=300;
 %       figure(fig_org+idx_start);
-%       plot(Sim.node_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);   
+        
       plot(Sim.node_set, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
-       plot(Sim.node_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-%       hold on;      grid on;
+      hold on;
+   plot(Sim.node_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+   hold on;
+    plot(Sim.node_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+      hold on;      grid on;
      xlabel('Number of Vehicles');   ylabel('System throughput (bits/second)');
-     legend('onoe','Sample');
+     legend('ONOE','AARF','SAMPLERATE');
           hold on; grid on;
      
 %  legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);

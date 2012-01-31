@@ -16,19 +16,15 @@ par_config;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 %Sim.node_set=[1:2:15];
-Sim.node_set=[1:2];
+Sim.node_set=[1:30];
 sNode=length(Sim.node_set);
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
 Sim.cal_aarf=1; 
-Sim.debug_aarf_sim=1;
-% 
 Sim.cal_onoe=1;
 Sim.debug_onoe_sim=0;
 Sim.debug_onoe_mod=0;
-
 Sim.cal_sample=1;
 Sim.debug_sample_sim=1;
-
 matname= [num2str(hh(1)) '-' num2str(hh(2)) '-'  num2str(hh(3)) '-'  num2str(hh(4)) '-'  num2str(hh(5))  '-linkadaptmob'] ;
 epsname=matname;
 bl_matsave=1;
@@ -100,7 +96,7 @@ for idx_start=1:sStart
   pk_suc_onoe_iter=zeros(1, iter_num);     
   pk_per_onoe_iter=zeros(1, iter_num); 
   pk_p_loss_onoe_iter=zeros(1, iter_num);
-  pk_delay_onoe_iter=zeros(1, iter_num); 
+%   pk_delay_onoe_iter=zeros(1, iter_num); 
   
   
    thr_sample_iter=zeros(1, iter_num);
@@ -113,7 +109,7 @@ for idx_start=1:sStart
   pk_suc_sample_iter=zeros(1, iter_num);     
   pk_per_sample_iter=zeros(1, iter_num); 
   pk_p_loss_sample_iter=zeros(1, iter_num);
-%   pk_delay_sample_iter=zeros(1, iter_num); 
+  pk_delay_sample_iter=zeros(1, iter_num); 
   
    
       
@@ -266,35 +262,19 @@ for idx_start=1:sStart
           ', throughput=', num2str(mean(thr_onoe_iter))]);  % Just in case
   end
   if Sim.cal_sample
-      thr_sample(idx_node, idx_snr, idx_period, idx_start)= mean(thr_onoe_iter);
-      eneff_sample(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_onoe_iter);      
-      col_sample(idx_node, idx_snr, idx_period, idx_start)= mean(col_onoe_iter);
-      suc_sample(idx_node, idx_snr, idx_period, idx_start)= mean(suc_onoe_iter);
-      per_sample(idx_node, idx_snr, idx_period, idx_start)= mean(per_onoe_iter);
+      thr_sample(idx_node, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
+      eneff_sample(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_sample_iter);      
+      col_sample(idx_node, idx_snr, idx_period, idx_start)= mean(col_sample_iter);
+      suc_sample(idx_node, idx_snr, idx_period, idx_start)= mean(suc_sample_iter);
+%       per_sample(idx_node, idx_snr, idx_period, idx_start)= mean(per_sample_iter);
       %delay_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(delay_onoe_iter);
       
-      pk_tx_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_onoe_iter); 
-      pk_col_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_onoe_iter); 
-      pk_suc_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_onoe_iter); 
-      pk_per_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_onoe_iter); 
-      %pk_delay_onoe(idx_node, idx_snr, idx_period, idx_start)=mean(pk_delay_onoe_iter); 
-            
-      
-      
-      thr_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(thr_onoe_iter);
-      eneff_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_onoe_iter);      
-      col_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(col_onoe_iter);
-      suc_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(suc_onoe_iter);
-      per_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(per_onoe_iter);
-      %delay_onoe_std(idx_node, idx_snr, idx_period, idx_start)= mean(delay_onoe_iter);
-      
-      pk_tx_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_onoe_iter); 
-      pk_col_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_onoe_iter); 
-      pk_suc_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_onoe_iter); 
-      pk_per_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_onoe_iter);
-      %pk_delay_onoe_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_delay_onoe_iter);  
-           
-            
+      pk_tx_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_sample_iter); 
+      pk_col_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_sample_iter); 
+      pk_suc_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_sample_iter); 
+%       pk_per_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_sample_iter); 
+%       %pk_delay_onoe(idx_node, idx_snr, idx_period, idx_start)=mean(pk_delay_onoe_iter); 
+                
       % disp('---------------------------------------------------------------');
       disp(['Simulation SAMPLE: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
           ', throughput=', num2str(mean(thr_onoe_iter))]);  % Just in case

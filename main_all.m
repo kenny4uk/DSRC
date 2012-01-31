@@ -20,14 +20,14 @@ par_config_all;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:10];
+Sim.node_set=[1:2];
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
 
 Sim.cal_aarf=0; 
-Sim.cal_onoe=1;
-Sim.debug_onoe_sim=0;
-Sim.debug_onoe_mod=0;
+% Sim.cal_onoe=1;
+% Sim.debug_onoe_sim=0;
+% Sim.debug_onoe_mod=0;
 Sim.cal_sample=1;
 Sim.debug_sample_sim=1;
 
@@ -99,28 +99,28 @@ for idx_start=1:sStart
 
   % if Startrate_mode(idx_start)>0; iter_num=1; else; iter_num= Sim.iternum; end;
  if Startrate_mode(idx_start)>0; iter_num=Sim.iternum1; else; iter_num= Sim.iternum0; end;  
-%   thr_aarf_iter=zeros(1, iter_num);
-%   eneff_aarf_iter=zeros(1,iter_num);
-%   col_aarf_iter=zeros(1, iter_num);
-%   suc_aarf_iter=zeros(1, iter_num);
-%   pk_tx_aarf_iter=zeros(1, iter_num);
-%   pk_col_aarf_iter=zeros(1, iter_num);
-%   pk_suc_aarf_iter=zeros(1, iter_num);         
-%   pk_per_aarf_iter=zeros(1, iter_num);          
+  thr_aarf_iter=zeros(1, iter_num);
+  eneff_aarf_iter=zeros(1,iter_num);
+  col_aarf_iter=zeros(1, iter_num);
+  suc_aarf_iter=zeros(1, iter_num);
+  pk_tx_aarf_iter=zeros(1, iter_num);
+  pk_col_aarf_iter=zeros(1, iter_num);
+  pk_suc_aarf_iter=zeros(1, iter_num);         
+  pk_per_aarf_iter=zeros(1, iter_num);          
 %   
-%   thr_onoe_iter=zeros(1, iter_num);
-%   eneff_onoe_iter=zeros(1,iter_num);
-%   col_onoe_iter=zeros(1, iter_num);
-%   suc_onoe_iter=zeros(1, iter_num);
-%   pk_tx_onoe_iter=zeros(1, iter_num);
-%   pk_col_onoe_iter=zeros(1, iter_num);
-%   pk_suc_onoe_iter=zeros(1, iter_num);     
-%   pk_per_onoe_iter=zeros(1, iter_num);                  
-% 
-%   thr_mod_onoe_iter=zeros(1, iter_num);
-%   eneff_mod_onoe_iter=zeros(1,iter_num);
-%   col_mod_onoe_iter=zeros(1, iter_num);
-%   suc_mod_onoe_iter=zeros(1, iter_num);
+% %   thr_onoe_iter=zeros(1, iter_num);
+% %   eneff_onoe_iter=zeros(1,iter_num);
+% %   col_onoe_iter=zeros(1, iter_num);
+% %   suc_onoe_iter=zeros(1, iter_num);
+% %   pk_tx_onoe_iter=zeros(1, iter_num);
+% %   pk_col_onoe_iter=zeros(1, iter_num);
+% %   pk_suc_onoe_iter=zeros(1, iter_num);     
+% %   pk_per_onoe_iter=zeros(1, iter_num);                  
+% % 
+% %   thr_mod_onoe_iter=zeros(1, iter_num);
+% %   eneff_mod_onoe_iter=zeros(1,iter_num);
+% %   col_mod_onoe_iter=zeros(1, iter_num);
+% %   suc_mod_onoe_iter=zeros(1, iter_num);
 
   
   thr_sample_iter=zeros(1, iter_num);
@@ -147,23 +147,23 @@ for idx_start=1:sStart
           Rate.startrate_prob=zeros(1,Rate.num); Rate.startrate_prob(Startrate_mode(idx_start))=1;
       end
       
-%       if Sim.cal_aarf
-%           disp('---------------------------------------------------------------')
-%           disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
-%               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
-% 
-%           alg_aarf();
-%           thr_aarf_iter(idx_iter)=Static.through;
-%           eneff_aarf_iter(idx_iter)=Static.energyeff;
-%           col_aarf_iter(idx_iter)=Static.pk_col;
-%           suc_aarf_iter(idx_iter)=Static.pk_suc;
-%           pk_tx_aarf_iter(idx_iter)=  mean(Pk.tx);
-%           pk_col_aarf_iter(idx_iter)=  mean(Pk.col);
-%           pk_suc_aarf_iter(idx_iter)=  mean(Pk.suc);          
-%           pk_per_aarf_iter(idx_iter)=  mean(Pk.per);                    
-%         
-%           Static          
-%       end
+      if Sim.cal_aarf
+          disp('---------------------------------------------------------------')
+          disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+              ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
+
+          alg_aarf();
+          thr_aarf_iter(idx_iter)=Static.through;
+          eneff_aarf_iter(idx_iter)=Static.energyeff;
+          col_aarf_iter(idx_iter)=Static.pk_col;
+          suc_aarf_iter(idx_iter)=Static.pk_suc;
+          pk_tx_aarf_iter(idx_iter)=  mean(Pk.tx);
+          pk_col_aarf_iter(idx_iter)=  mean(Pk.col);
+          pk_suc_aarf_iter(idx_iter)=  mean(Pk.suc);          
+          pk_per_aarf_iter(idx_iter)=  mean(Pk.per);                    
+        
+          Static          
+      end
 
 %       if Sim.cal_onoe
 %           disp('---------------------------------------------------------------')
@@ -200,7 +200,7 @@ for idx_start=1:sStart
             Trace_sample(ii).suc=[]; Trace_sample(ii).col=[]; Trace_sample(ii).per=[]; 
           end;
           
-          alg_sample1();
+          alg_sample();
           thr_sample_iter(idx_iter)=Static.through;
           eneff_sample_iter(idx_iter)=Static.energyeff;          
           col_sample_iter(idx_iter)=Static.pk_col;
@@ -216,32 +216,32 @@ for idx_start=1:sStart
       
   end % for idx_iter
 
-%   if Sim.cal_aarf
-%       thr_aarf(idx_node, idx_snr, idx_start)= mean(thr_aarf_iter);
-%       eneff_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_aarf_iter);      
-%       col_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(col_aarf_iter);
-%       suc_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(suc_aarf_iter);
-% 
-%       pk_tx_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_aarf_iter); 
-%       pk_col_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_aarf_iter); 
-%       pk_suc_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_aarf_iter); 
-%       pk_per_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_aarf_iter);       
-%       
-%       thr_aarf_std(idx_node, idx_snr, idx_start)= std(thr_aarf_iter);
-%       eneff_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(eneff_aarf_iter);      
-%       col_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(col_aarf_iter);
-%       suc_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(suc_aarf_iter);
-% 
-%       pk_tx_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_tx_aarf_iter); 
-%       pk_col_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_col_aarf_iter); 
-%       pk_suc_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_suc_aarf_iter); 
-%       pk_per_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_per_aarf_iter);       
-%       
-% 
-%       % disp('---------------------------------------------------------------');
-%       disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
-%           ', throughput=', num2str(mean(thr_aarf_iter))]);  % Just in case
-%   end
+  if Sim.cal_aarf
+      thr_aarf(idx_node, idx_snr, idx_start)= mean(thr_aarf_iter);
+      eneff_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_aarf_iter);      
+      col_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(col_aarf_iter);
+      suc_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(suc_aarf_iter);
+
+      pk_tx_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_aarf_iter); 
+      pk_col_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_aarf_iter); 
+      pk_suc_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_aarf_iter); 
+      pk_per_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_aarf_iter);       
+      
+      thr_aarf_std(idx_node, idx_snr, idx_start)= std(thr_aarf_iter);
+      eneff_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(eneff_aarf_iter);      
+      col_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(col_aarf_iter);
+      suc_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(suc_aarf_iter);
+
+      pk_tx_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_tx_aarf_iter); 
+      pk_col_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_col_aarf_iter); 
+      pk_suc_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_suc_aarf_iter); 
+      pk_per_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_per_aarf_iter);       
+      
+
+      % disp('---------------------------------------------------------------');
+      disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+          ', throughput=', num2str(mean(thr_aarf_iter))]);  % Just in case
+  end
   
 %   if Sim.cal_onoe
 %       thr_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(thr_onoe_iter);
