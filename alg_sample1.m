@@ -1,4 +1,4 @@
-function alg_sample
+function alg_sample1
 
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
@@ -9,13 +9,13 @@ par_init;
 Sample.bl_debug= 0;
 Sample.frame_bin=[250 1000 3000]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
 Sample.frame_bin=[1500]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
-Sample.rates=[3 9 12 24 27]*1e6; 
+Sample.rates=[6 12 24 36 54]; 
 Sample.num_rate=length(Sample.rates); % num of tx rate and bit rate.
 Sample.sample_time=10/100; % 10% of transmission time used for sampling, sending at a different bit-rate.
 Sample.stale_failure_timeout=10; % stale consecutive 4 failures timeout 10 seconds;
 Sample.min_switch=1; % minimal switch time 1 second.
-Sample.smoothing_rate=0.95; % ewma percentage (out of 100), exponentially weighted moving average(ewma)  
-Sample.rate_first_series=3; % set up the transmit rate for first serier of transmissions with the sampling rate. the remaining rate set to the lowest one.
+Sample.smoothing_rate=0.95; % ewma percentage (out of 100) 
+Sample.rate_first_series=5; % set up the transmit rate for first serier of transmissions with the sampling rate. the remaining rate set to the lowest one.
 
   % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
   Sim.tstart = clock;
@@ -62,8 +62,8 @@ end
       
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
       v=50;
-  old_pos=rand(1,40)*1000;
-  Phy.Ts=20;
+  old_pos=rand(1,10)*1000;
+  Phy.Ts=0.001;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
       Sim.time = Sim.time+ dt_temp*Sample.t_slot;       % update the simulation time accordingly
@@ -118,15 +118,15 @@ end
         pause;
         end
         
-%         Per_temp= Phy.snr_per(temp_rate_idx(Txnode)); 
+        Per_temp= Phy.snr_per(temp_rate_idx(Txnode)); 
         if 0 & Sample.bl_debug==1
-%           Per_temp
-%           temp_rate
-%           Phy.snr_per
+          Per_temp
+          temp_rate
+          Phy.snr_per
           pause;
         end
         
-%         if rand()<Per_temp; Bper=1; else Bper=0; end;
+        if rand()<Per_temp; Bper=1; else Bper=0; end;
         if Bper==1
           St.fail(Txnode)=1; 
           St.col(Txnode)=0;

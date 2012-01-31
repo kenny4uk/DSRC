@@ -39,16 +39,27 @@ for idx_node=1:sNode
         
       end
       
-%       if Sim.cal_onoe
-%        plot_thr_onoe(idx_node)=thr_onoe(idx_node, idx_snr, idx_period, idx_start);
-%       plot_col_onoe(idx_node)=col_onoe(idx_node, idx_snr, idx_period, idx_start);
-%       plot_suc_onoe(idx_node)=suc_onoe(idx_node, idx_snr, idx_period, idx_start);
-%        plot_pk_per_onoe(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
-%        %plot_pk_delay_onoe(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
-%       %plot_p_loss_onoe(idx_node)=p_loss_onoe(idx_node, idx_snr, idx_period, idx_start);
-%       plot_eneff_onoe(idx_node)=eneff_onoe(idx_node, idx_snr, idx_period, idx_start);
-%      
-%       end
+      if Sim.cal_onoe
+       plot_thr_onoe(idx_node)=thr_onoe(idx_node, idx_snr, idx_period, idx_start);
+      plot_col_onoe(idx_node)=col_onoe(idx_node, idx_snr, idx_period, idx_start);
+      plot_suc_onoe(idx_node)=suc_onoe(idx_node, idx_snr, idx_period, idx_start);
+       plot_pk_per_onoe(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
+       %plot_pk_delay_onoe(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
+      %plot_p_loss_onoe(idx_node)=p_loss_onoe(idx_node, idx_snr, idx_period, idx_start);
+      plot_eneff_onoe(idx_node)=eneff_onoe(idx_node, idx_snr, idx_period, idx_start);
+     
+      end
+      
+        if Sim.cal_sample
+       plot_thr_sample(idx_node)=thr_onoe(idx_node, idx_snr, idx_period, idx_start);
+      plot_col_sample(idx_node)=col_onoe(idx_node, idx_snr, idx_period, idx_start);
+      plot_suc_sample(idx_node)=suc_onoe(idx_node, idx_snr, idx_period, idx_start);
+       plot_pk_per_sample(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
+       %plot_pk_delay_onoe(idx_node)=per_onoe(idx_node, idx_snr, idx_period, idx_start);
+      %plot_p_loss_onoe(idx_node)=p_loss_onoe(idx_node, idx_snr, idx_period, idx_start);
+      plot_eneff_sample(idx_node)=eneff_onoe(idx_node, idx_snr, idx_period, idx_start);
+     
+      end
       
   end
 
@@ -59,8 +70,7 @@ for idx_node=1:sNode
 %       hold on;      grid on;
 %      %plot(pk_per_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
 %      % plot(plot_suc_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-%       plot(Sim.node_set, plot_thr_onoe, ['k' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
-%       %plot(plot_eneff_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+      %       %plot(plot_eneff_onoe, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
 %       %plot(plot_delay_aarf, plot_thr_aarf, ['g' symbol_plot( rem(idx_snr,len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
 %       hold on;      grid on;
 %       %xlabel('collided packets');   ylabel('Throughput');
@@ -74,17 +84,22 @@ for idx_node=1:sNode
 %               '-period' num2str(Onoe.period_set(idx_period)*10) '-start' num2str(Startrate_mode(idx_start)) ] ); end;       
 %   end
 
-   if Sim.cal_aarf
-      fig_org=300;
-      figure(fig_org+idx_start);
-      plot(Sim.node_set, plot_thr_aarf, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
-      hold on;      grid on;
+%    if Sim.cal_aarf
+%       fig_org=300;
+%       figure(fig_org+idx_start);
+%       plot(Sim.node_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);   
+      plot(Sim.node_set, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
+       plot(Sim.node_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+%       hold on;      grid on;
      xlabel('Number of Vehicles');   ylabel('System throughput (bits/second)');
- legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);
-      set(gca, 'FontSize', font_size, 'LineWidth', line_width);     
-      if bl_epssave==1;    eval(['print -deps ' epsname 'through-aarf-node' num2str(max(Sim.node_set)) ...
-              '-period' num2str(Onoe.period_set(idx_period)*10) '-start' num2str(Startrate_mode(idx_start)) ] ); end;                    
-  end
+     legend('onoe','Sample');
+          hold on; grid on;
+     
+%  legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))] , ['SNR: ' num2str(Phy.snr_set(4))]);
+%       set(gca, 'FontSize', font_size, 'LineWidth', line_width);     
+%       if bl_epssave==1;    eval(['print -deps ' epsname 'through-aarf-node' num2str(max(Sim.node_set)) ...
+%               '-period' num2str(Onoe.period_set(idx_period)*10) '-start' num2str(Startrate_mode(idx_start)) ] ); end;                    
+%   end
 end %idx_sNode
 end % for idx_start  
 end % for idx_snr  

@@ -20,12 +20,11 @@ par_config_all;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:40];
+Sim.node_set=[1:10];
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
 
 Sim.cal_aarf=0; 
-
 Sim.cal_onoe=1;
 Sim.debug_onoe_sim=0;
 Sim.debug_onoe_mod=0;
@@ -46,9 +45,9 @@ sSnr=length(Phy.snr_set);
 
 Phy.rate_mode=[1 3 5 6 7]; 
 % Phy.rate_mode=[5]; 
-Phy.power=40*10^(-3); % normalized transmit power in  Watt(40mW).
+Phy.power=10^5; % normalized transmit power, 1 Watt.
 
-Rate.all=[3 12 18 24 27]*1e6; 
+Rate.all=[3 6 9 24 27]*1e6; 
 % Rate.set=54e6;
 Rate.set=Rate.all;
 sRset=length(Rate.set);
@@ -201,7 +200,7 @@ for idx_start=1:sStart
             Trace_sample(ii).suc=[]; Trace_sample(ii).col=[]; Trace_sample(ii).per=[]; 
           end;
           
-          alg_sample();
+          alg_sample1();
           thr_sample_iter(idx_iter)=Static.through;
           eneff_sample_iter(idx_iter)=Static.energyeff;          
           col_sample_iter(idx_iter)=Static.pk_col;
