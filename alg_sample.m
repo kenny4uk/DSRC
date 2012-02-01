@@ -9,7 +9,7 @@ par_init;
 Sample.bl_debug= 0;
 Sample.frame_bin=[250 1000 3000]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
 Sample.frame_bin=[1500]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
-Sample.rates=[6 12 24 36 54]; 
+Sample.rates=[3 6 9 24 27]; 
 Sample.num_rate=length(Sample.rates); % num of tx rate and bit rate.
 Sample.sample_time=10/100; % 10% of transmission time used for sampling, sending at a different bit-rate.
 Sample.stale_failure_timeout=10; % stale consecutive 4 failures timeout 10 seconds;
@@ -238,7 +238,7 @@ for idx_node=1:Sim.n
 		Sstats.packets_total(idx_node,  y)= 0;
 
     % set the initial rate */
-    Sstats.current_rate(idx_node,  y)= find(Sample.rates==36);
+    Sstats.current_rate(idx_node,  y)= find(Sample.rates==27);
     Sstats.current_sample_ndx(idx_node,  y)= -1;
 		Sstats.last_sample_ndx(idx_node,  y)= 1;
 		
@@ -317,14 +317,14 @@ global Sim Mac Sample Sstats;
 			if (Sstats.packets_total(node_id,  size_bin)<1 | best_ndx == -1) 
 				% no packet has been sent successfully yet, so pick an rssi-appropriate bit-rate. 
         % We know if the rssi is very low that the really high bit rates will not work.
-				initial_rate = 36; 
-        Sstats.chn_avgrssi(node_id)=36; % here we simply set the avgrssi value, which can be amended later.
-				if (Sstats.chn_avgrssi(node_id) > 50)
+				initial_rate = 24; 
+        Sstats.chn_avgrssi(node_id)=12; % here we simply set the avgrssi value, which can be amended later.
+				if (Sstats.chn_avgrssi(node_id) > 12)
 					initial_rate = 108; % 54 mbps */
-        elseif (Sstats.chn_avgrssi(node_id) > 30) 
-					initial_rate = 36; % 36 mbps */
+        elseif (Sstats.chn_avgrssi(node_id) > 12) 
+					initial_rate = 24; % 36 mbps */
         else
-					initial_rate = 12;  % 12 mbps */
+					initial_rate = 3;  % 12 mbps */
         end
 
 				for (ndx= Sample.num_rate:-1:1) 
