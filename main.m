@@ -16,7 +16,7 @@ par_config;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 %Sim.node_set=[1:2:15];
-Sim.node_set=[1:30];
+Sim.node_set=[1:40];
 sNode=length(Sim.node_set);
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
 Sim.cal_aarf=1; 

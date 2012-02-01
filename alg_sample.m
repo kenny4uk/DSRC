@@ -317,14 +317,14 @@ global Sim Mac Sample Sstats;
 			if (Sstats.packets_total(node_id,  size_bin)<1 | best_ndx == -1) 
 				% no packet has been sent successfully yet, so pick an rssi-appropriate bit-rate. 
         % We know if the rssi is very low that the really high bit rates will not work.
-				initial_rate = 24; 
+				initial_rate = 9; 
         Sstats.chn_avgrssi(node_id)=12; % here we simply set the avgrssi value, which can be amended later.
 				if (Sstats.chn_avgrssi(node_id) > 12)
-					initial_rate = 108; % 54 mbps */
+					initial_rate = 54; % 27 mbps */
         elseif (Sstats.chn_avgrssi(node_id) > 12) 
-					initial_rate = 24; % 36 mbps */
+					initial_rate = 9; % 9 mbps */
         else
-					initial_rate = 3;  % 12 mbps */
+					initial_rate = 6;  % 6 mbps */
         end
 
 				for (ndx= Sample.num_rate:-1:1) 
