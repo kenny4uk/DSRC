@@ -155,7 +155,7 @@ end
       for ii=1:sTxnode
         iTx=Txnode(ii);
         if (Sstats.last_tx_suc(iTx)==1 | Sstats.last_tx_tries(iTx)==(Mac.nRetry_max+1))
-          Trace_sample(iTx).time=[Trace_sample(iTx).time Sim.time];
+          Trace_sample(iTx).time=[Trace_sample(iTx).time Sim.time(iTx)];
           Trace_sample(iTx).rate=[Trace_sample(iTx).rate Rate.level(iTx)];
           Trace_sample(iTx).fail=[Trace_sample(iTx).fail St.fail(iTx)];
           Trace_sample(iTx).col=[Trace_sample(iTx).col St.col(iTx)];

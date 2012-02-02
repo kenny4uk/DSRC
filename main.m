@@ -82,7 +82,7 @@ for idx_start=1:sStart
   pk_col_aarf_iter=zeros(1, iter_num);
   pk_suc_aarf_iter=zeros(1, iter_num);         
   pk_per_aarf_iter=zeros(1, iter_num); 
-  pk_p_loss_aarf_iter=zeros(1, iter_num);
+%   pk_p_loss_aarf_iter=zeros(1, iter_num);
   %pk_delay_aarf_iter=zeros(1, iter_num); 
   
   
@@ -95,7 +95,7 @@ for idx_start=1:sStart
   pk_col_onoe_iter=zeros(1, iter_num);
   pk_suc_onoe_iter=zeros(1, iter_num);     
   pk_per_onoe_iter=zeros(1, iter_num); 
-  pk_p_loss_onoe_iter=zeros(1, iter_num);
+%   pk_p_loss_onoe_iter=zeros(1, iter_num);
 %   pk_delay_onoe_iter=zeros(1, iter_num); 
   
   
@@ -108,9 +108,9 @@ for idx_start=1:sStart
   pk_col_sample_iter=zeros(1, iter_num);
   pk_suc_sample_iter=zeros(1, iter_num);     
   pk_per_sample_iter=zeros(1, iter_num); 
-  pk_p_loss_sample_iter=zeros(1, iter_num);
-  pk_delay_sample_iter=zeros(1, iter_num); 
-  
+%   pk_p_loss_sample_iter=zeros(1, iter_num);
+%   pk_delay_sample_iter=zeros(1, iter_num); 
+%   
    
       
   for idx_iter=1: iter_num
@@ -159,7 +159,7 @@ for idx_start=1:sStart
          eneff_onoe_iter(idx_iter)=Static.energyeff;          
           col_onoe_iter(idx_iter)=Static.pk_col;
           suc_onoe_iter(idx_iter)=Static.pk_suc;
-          per_onoe_iter(idx_iter)=Static.pk_per; 
+         per_onoe_iter(idx_iter)=Static.pk_per; 
          %delay_onoe_iter(idx_iter)=Static..pk_delay;
           pk_tx_onoe_iter(idx_iter)= mean(Pk.tx);
           pk_col_onoe_iter(idx_iter)=  mean(Pk.col);
@@ -232,7 +232,7 @@ for idx_start=1:sStart
       eneff_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_onoe_iter);      
       col_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(col_onoe_iter);
       suc_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(suc_onoe_iter);
-      per_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(per_onoe_iter);
+        per_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(per_onoe_iter);
       %delay_onoe(idx_node, idx_snr, idx_period, idx_start)= mean(delay_onoe_iter);
       
       pk_tx_onoe(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_onoe_iter); 

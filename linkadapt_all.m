@@ -66,6 +66,7 @@ for idx_node=1:sNode
 %       fig_org=100;
 %       figure(fig_org+1+idx_start);
       plot(Sim.node_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
+       hold on; 
        plot(Sim.node_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
       hold on;      grid on;
       xlabel('Number of nodes');   ylabel('System throughput (bits/second)');
