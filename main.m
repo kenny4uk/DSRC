@@ -86,15 +86,15 @@ for idx_start=1:sStart
   %pk_delay_aarf_iter=zeros(1, iter_num); 
   
   
-  thr_onoe_iter=zeros(1, iter_num);
-  eneff_onoe_iter=zeros(1,iter_num);
-  col_onoe_iter=zeros(1, iter_num);
-  suc_onoe_iter=zeros(1, iter_num);
-  delay_onoe_iter=zeros(1, iter_num);
-  pk_tx_onoe_iter=zeros(1, iter_num);
-  pk_col_onoe_iter=zeros(1, iter_num);
-  pk_suc_onoe_iter=zeros(1, iter_num);     
-  pk_per_onoe_iter=zeros(1, iter_num); 
+%   thr_onoe_iter=zeros(1, iter_num);
+%   eneff_onoe_iter=zeros(1,iter_num);
+%   col_onoe_iter=zeros(1, iter_num);
+%   suc_onoe_iter=zeros(1, iter_num);
+%   delay_onoe_iter=zeros(1, iter_num);
+%   pk_tx_onoe_iter=zeros(1, iter_num);
+%   pk_col_onoe_iter=zeros(1, iter_num);
+%   pk_suc_onoe_iter=zeros(1, iter_num);     
+%   pk_per_onoe_iter=zeros(1, iter_num); 
 %   pk_p_loss_onoe_iter=zeros(1, iter_num);
 %   pk_delay_onoe_iter=zeros(1, iter_num); 
   
