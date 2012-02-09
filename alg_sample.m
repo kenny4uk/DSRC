@@ -1,4 +1,4 @@
-function alg_sample
+function alg_sample(spd_set)
 
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
@@ -9,7 +9,7 @@ par_init;
 Sample.bl_debug= 0;
 Sample.frame_bin=[250 1000 3000]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
 Sample.frame_bin=[1500]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
-Sample.rates=[3 6 9 24 27]; 
+Sample.rates=[3 12 18 24 27]; 
 Sample.num_rate=length(Sample.rates); % num of tx rate and bit rate.
 Sample.sample_time=10/100; % 10% of transmission time used for sampling, sending at a different bit-rate.
 Sample.stale_failure_timeout=10; % stale consecutive 4 failures timeout 10 seconds;
@@ -21,6 +21,11 @@ Sample.rate_first_series=5; % set up the transmit rate for first serier of trans
   Sim.tstart = clock;
   Sim.time = 0.0;                  % simulation time 
   Sim.ratetime=0.0;
+  t=0; %simulation starts at this time
+x_max=1000;% maximum range within which nodes can transmit
+ v= 0;% vehicle moving with constant speed for zero mobililty
+old_pos= 0;
+Phy.Ts=0.0;
 
 Sample.t_slot = 9*10^(-6);
 Sample.t_sifs = 16*10^(-6);
@@ -57,11 +62,19 @@ end
       end
       
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
+      Phy.Ts=0.001;
+%       v= 20;
+%  v=rand(1,50)*70;
+spd_set=v;
+
+       old_pos= rand(1,20)*1000;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
       Sim.time = Sim.time+ dt_temp*Sample.t_slot;       % update the simulation time accordingly
+      w =p_mob(Phy.Ts,v,old_pos,x_max);
       sTxnode = length(Txnode);                                       % sTxnode = number of simultaneously transmitting nodes
       Pk.tx(Txnode)=Pk.tx(Txnode)+1;
+      old_pos=w;
       Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;      
       
       % find rate for each transmission node if the transmission is the first attempt;
@@ -121,19 +134,31 @@ end
         if Bper==1
           St.fail(Txnode)=1; 
           St.col(Txnode)=0;
-          St.per(Txnode)=1;        
+          St.per(Txnode)=1; 
+          Phy.Ts=0.002;
+%           v= 30;
+%  v=rand(1,50)*70;
+spd_set=v;
+            w =p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.per(Txnode)=Pk.per(Txnode)+1;
-
+          old_pos=w;
           Phy.Tc(Txnode)=Sample.Tc_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;          
           Sim.time = Sim.time + Phy.Tc(Txnode);                 % update the simulation time 
         else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
           St.fail(Txnode)=0; 
           St.col(Txnode)=0;
-          St.per(Txnode)=0;        
+          St.per(Txnode)=0; 
+          Phy.Ts=0.003;
+%           v= 40;
+%  v=rand(1,50)*70;
+
+
+           w =p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
           Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
+          old_pos=w;
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
           Sim.time= Sim.time + Phy.Ts(Txnode);            % update the simulation time 
           % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 
@@ -155,7 +180,7 @@ end
       for ii=1:sTxnode
         iTx=Txnode(ii);
         if (Sstats.last_tx_suc(iTx)==1 | Sstats.last_tx_tries(iTx)==(Mac.nRetry_max+1))
-          Trace_sample(iTx).time=[Trace_sample(iTx).time Sim.time(iTx)];
+          Trace_sample(iTx).time=[Trace_sample(iTx).time Sim.time];
           Trace_sample(iTx).rate=[Trace_sample(iTx).rate Rate.level(iTx)];
           Trace_sample(iTx).fail=[Trace_sample(iTx).fail St.fail(iTx)];
           Trace_sample(iTx).col=[Trace_sample(iTx).col St.col(iTx)];
@@ -238,7 +263,7 @@ for idx_node=1:Sim.n
 		Sstats.packets_total(idx_node,  y)= 0;
 
     % set the initial rate */
-    Sstats.current_rate(idx_node,  y)= find(Sample.rates==27);
+    Sstats.current_rate(idx_node,  y)= find(Sample.rates==12);
     Sstats.current_sample_ndx(idx_node,  y)= -1;
 		Sstats.last_sample_ndx(idx_node,  y)= 1;
 		
@@ -317,14 +342,14 @@ global Sim Mac Sample Sstats;
 			if (Sstats.packets_total(node_id,  size_bin)<1 | best_ndx == -1) 
 				% no packet has been sent successfully yet, so pick an rssi-appropriate bit-rate. 
         % We know if the rssi is very low that the really high bit rates will not work.
-				initial_rate = 9; 
-        Sstats.chn_avgrssi(node_id)=12; % here we simply set the avgrssi value, which can be amended later.
-				if (Sstats.chn_avgrssi(node_id) > 12)
-					initial_rate = 54; % 27 mbps */
-        elseif (Sstats.chn_avgrssi(node_id) > 12) 
-					initial_rate = 9; % 9 mbps */
+				initial_rate = 36; 
+        Sstats.chn_avgrssi(node_id)=36; % here we simply set the avgrssi value, which can be amended later.
+				if (Sstats.chn_avgrssi(node_id) > 50)
+					initial_rate = 108; % 54 mbps */
+        elseif (Sstats.chn_avgrssi(node_id) > 30) 
+					initial_rate = 36; % 36 mbps */
         else
-					initial_rate = 6;  % 6 mbps */
+					initial_rate = 12;  % 12 mbps */
         end
 
 				for (ndx= Sample.num_rate:-1:1) 

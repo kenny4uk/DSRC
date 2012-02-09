@@ -9,7 +9,7 @@ par_init;
 Sample.bl_debug= 0;
 Sample.frame_bin=[250 1000 3000]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
 Sample.frame_bin=[1500]; Sample.num_frame_bin=length(Sample.frame_bin);  % num of bins and packet size for each bin; max frame length is 3000 byte.
-Sample.rates=[6 12 24 36 54]; 
+Sample.rates=[3 12 18 24 27]; 
 Sample.num_rate=length(Sample.rates); % num of tx rate and bit rate.
 Sample.sample_time=10/100; % 10% of transmission time used for sampling, sending at a different bit-rate.
 Sample.stale_failure_timeout=10; % stale consecutive 4 failures timeout 10 seconds;

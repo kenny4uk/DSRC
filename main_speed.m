@@ -17,12 +17,14 @@ hh=datevec(now);
 par_config_all;
 
 % Sim.iternum=1; % number of iterations for a fixed simulation scenario.
-Sim.iternum0=1; % number of iterations for a fixed simulation scenario.
-Sim.iternum1=1; % number of iterations for a fixed simulation scenario.
+Sim.iternum0=3; % number of iterations for a fixed simulation scenario.
+Sim.iternum1=3; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
 Sim.node_set=[1:20];
-n=20;
-speed=randi(70,1,n);
+% n=5;
+% spd_set=randi(70,1,n);% speed of vehicle
+spd_set=[0:3.6:70];% speed of vehicle
+sSpd =length(spd_set);
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
 Sim.cal_aarf=1; 
@@ -80,10 +82,12 @@ sPeriodset=length(Onoe.period_set);
 for idx_period=1:sPeriodset
 for idx_node=1:sNode
 for idx_snr=1:sSnr    
-for idx_start=1:sStart    
+for idx_start=1:sStart
+% for idx_spd=1:sSpd  
 
     Onoe.period=Onoe.period_set(idx_period);
     Sim.n=Sim.node_set(idx_node);                       % number of nodes in the BSS
+%     s.spd=spd_set(idx_spd);
     Onoe.chn_busy_small=1;
     if Sim.n==1; Onoe.chn_busy_small=0.7; elseif Sim.n==2; Onoe.chn_busy_small=0.8; elseif Sim.n==3;  Onoe.chn_busy_small=0.85; end;
     Onoe.mod_numpk_init=ceil(6*10^6*Onoe.chn_busy*Onoe.chn_busy_small*Onoe.mod_coeff*Onoe.period/(App.lave+Phy.Ls_over)/8/Sim.n); 
@@ -96,6 +100,7 @@ for idx_start=1:sStart
     end
   
     Phy.snr=Phy.snr_set(idx_snr);
+%     spd=spd_set(idx_spd);
     Phy.snr_per= snr_per(Phy.snr, Phy.rate_mode);
 
   % if Startrate_mode(idx_start)>0; iter_num=1; else; iter_num= Sim.iternum; end;
@@ -172,7 +177,11 @@ for idx_start=1:sStart
           disp('---------------------------------------------------------------')
 %           curr_time=datevec(now);
 %           disp(['current time is: ' num2str(curr_time(2)) '-'  num2str(curr_time(3)) '-'  num2str(curr_time(4)) '-'  num2str(curr_time(5))]);
-          disp(['Simulation Sample: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+%           disp(['Simulation Sample: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+%               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
+%           disp(['Simulation Sample: n=',num2str(Sim.n),', spd =',num2str(s.spd) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+%               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
+          disp(['Simulation Sample: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
 
           for ii=1:Sim.n; 
@@ -180,7 +189,7 @@ for idx_start=1:sStart
             Trace_sample(ii).suc=[]; Trace_sample(ii).col=[]; Trace_sample(ii).per=[]; 
           end;
 %           
-          alg_sample();
+          alg_sample(spd_set);
           thr_sample_iter(idx_iter)=Static.through;
           eneff_sample_iter(idx_iter)=Static.energyeff;          
           col_sample_iter(idx_iter)=Static.pk_col;
@@ -195,10 +204,12 @@ for idx_start=1:sStart
       end
        if Sim.cal_aarf
           disp('---------------------------------------------------------------')
-          disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+%           disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+%               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
+           disp(['Simulation AARF: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
 
-          alg_aarf1();
+          alg_aarf1(spd_set);
          thr_aarf_iter(idx_iter)=Static.through;
           eneff_aarf_iter(idx_iter)=Static.energyeff;
           col_aarf_iter(idx_iter)=Static.pk_col;
@@ -266,8 +277,11 @@ for idx_start=1:sStart
       pk_per_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_sample_iter);       
       
       % disp('---------------------------------------------------------------');
-      disp(['Simulation Sample: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
-          ', throughput=', num2str(mean(thr_sample_iter))]);  % Just in case
+%       disp(['Simulation Sample: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+%           ', throughput=', num2str(mean(thr_sample_iter))]);  % Just in case
+      
+       disp(['Simulation Sample: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
+              ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
    end
   
       if Sim.cal_aarf
@@ -293,10 +307,12 @@ for idx_start=1:sStart
       
 
       % disp('---------------------------------------------------------------');
-      disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
-          ', throughput=', num2str(mean(thr_aarf_iter))]);  % Just in case
+%       disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
+%           ', throughput=', num2str(mean(thr_aarf_iter))]);  % Just in case
+       disp(['Simulation AARF: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
+              ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
   end
-  
+% end %for idx_spd 
 end % for idx_start
 end % for idx_snr  
 end % for idx_node
@@ -312,4 +328,5 @@ if bl_matsave==1;     eval( ['save ' matname]); end;
 linkadaptall;
 % linkadaptmob;
 % save   2009-9-27-16-5 thr_mod_onoe  eneff_mod_onoe  col_mod_onoe  suc_mod_onoe   per_mod_onoe ...
-%     thr_mod_onoe_std  eneff_mod_onoe_std  col_mod_onoe_std  suc_mod_onoe_std   per_mod_onoe_std;
+%     thr_mod_onoe_std  eneff_mod_onoe_std  col_mod_onoe_std
+%     suc_mod_onoe_std   per_mod_onoe_std;
