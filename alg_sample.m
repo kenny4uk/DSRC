@@ -66,8 +66,9 @@ end
 %       v= 20;
 %  v=rand(1,50)*70;
 spd_set=v;
+% spd_set=0;
 
-       old_pos= rand(1,20)*1000;
+       old_pos= rand(1,21)*1000;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
       Sim.time = Sim.time+ dt_temp*Sample.t_slot;       % update the simulation time accordingly
@@ -342,14 +343,14 @@ global Sim Mac Sample Sstats;
 			if (Sstats.packets_total(node_id,  size_bin)<1 | best_ndx == -1) 
 				% no packet has been sent successfully yet, so pick an rssi-appropriate bit-rate. 
         % We know if the rssi is very low that the really high bit rates will not work.
-				initial_rate = 36; 
-        Sstats.chn_avgrssi(node_id)=36; % here we simply set the avgrssi value, which can be amended later.
-				if (Sstats.chn_avgrssi(node_id) > 50)
-					initial_rate = 108; % 54 mbps */
-        elseif (Sstats.chn_avgrssi(node_id) > 30) 
-					initial_rate = 36; % 36 mbps */
+				initial_rate = 24; 
+        Sstats.chn_avgrssi(node_id)=24; % here we simply set the avgrssi value, which can be amended later.
+				if (Sstats.chn_avgrssi(node_id) > 27)
+					initial_rate = 54; % 54 mbps */
+        elseif (Sstats.chn_avgrssi(node_id) > 18) 
+					initial_rate = 24; % 24 mbps */
         else
-					initial_rate = 12;  % 12 mbps */
+					initial_rate = 3;  % 3 mbps */
         end
 
 				for (ndx= Sample.num_rate:-1:1) 

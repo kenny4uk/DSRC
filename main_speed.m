@@ -17,13 +17,19 @@ hh=datevec(now);
 par_config_all;
 
 % Sim.iternum=1; % number of iterations for a fixed simulation scenario.
-Sim.iternum0=3; % number of iterations for a fixed simulation scenario.
-Sim.iternum1=3; % number of iterations for a fixed simulation scenario.
+Sim.iternum0=2; % number of iterations for a fixed simulation scenario.
+Sim.iternum1=2; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:20];
-% n=5;
-% spd_set=randi(70,1,n);% speed of vehicle
-spd_set=[0:4.2:80];% speed of vehicle
+Sim.node_set=[1:21];
+%  n=5;
+% speed=randi(70,1,n);% speed of vehicle
+spdavg=40;% Average speed of each vehicle i km/h
+spd_min=spdavg*0.75;%This is the minimum speed required for each vehicle
+spd_max=spdavg*1.25;
+spd_set=[spdavg*0.75:spdavg*1.25];
+% spd_set=[31:40];% speed of vehicle
+% spd_set=mean(speed,1);
+% spd_set=0;
 sSpd =length(spd_set);
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
@@ -42,14 +48,14 @@ bl_epssave=1;
 App.lave=1500;      % the average packet length in bytes used in [2]
 
 % SNR and PER 
-Phy.snr_set=[5 10 15 20];
+Phy.snr_set=[30 35];
 % Phy.snr_set=[55];
 sSnr=length(Phy.snr_set);
 
 Phy.rate_mode=[1 3 5 6 7]; 
 % Phy.rate_mode=[5]; 
-% Phy.power=10^5; % normalized transmit power, 1 Watt.
-Phy.power=40*10^(-3); % normalized transmit power in Watt.
+Phy.power=10^5; % normalized transmit power, 1 Watt.
+% Phy.power=40*10^(-3); % normalized transmit power in Watt.
 Rate.all=[3 12 18 24 27]*1e6;
 % Rate.set=54e6;
 Rate.set=Rate.all;
