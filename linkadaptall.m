@@ -79,23 +79,23 @@ for idx_node=1:sNode
 
 % plot(Sim.node_set, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
 %     hold on;
-%    plot(Sim.node_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-%     hold on; 
-   plot(spd_set, plot_suc_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+   plot(Sim.node_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
     hold on; 
-%    plot(Sim.node_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
-% 
-%      hold on; grid on;
-      plot(spd_set, plot_suc_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+%    plot(spd_set, plot_suc_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+%     hold on; 
+   plot(Sim.node_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
 
      hold on; grid on;
+%       plot(spd_set, plot_suc_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+% 
+%      hold on; grid on;
 %       xlabel('Number of nodes');
-%       ylabel('Throughput');
+      ylabel('System Throughput(bits/second)');
 
 %   end
-%    xlabel('Number of vehicles');
-   xlabel('Average Speed of vehicles(km/h)');
-      ylabel('Successful parkets');
+   xlabel('Number of vehicles');
+%    xlabel('Average Speed of vehicles(km/h)');
+%       ylabel('Successful parkets');
       legend('AARF','SAMPLERATE');
       hold on;
 grid on;
