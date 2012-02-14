@@ -94,8 +94,8 @@ for idx_node=1:sNode
 
 %   end
 %    xlabel('Number of vehicles');
-   xlabel('Speed of vehicles(km/h)');
-      ylabel('Success pkt');
+   xlabel('Average Speed of vehicles(km/h)');
+      ylabel('Successful parkets');
       legend('AARF','SAMPLERATE');
       hold on;
 grid on;
