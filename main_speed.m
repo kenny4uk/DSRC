@@ -20,7 +20,7 @@ par_config_all;
 Sim.iternum0=2; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=2; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:10];
+Sim.node_set=[1:50];
 %  n=5;
 % speed=randi(70,1,n);% speed of vehicle
 spdavg=80;% Average speed of each vehicle i km/h
