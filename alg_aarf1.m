@@ -32,7 +32,7 @@ dt_temp = min(Mac.Bk_cnt);% Txnode = IDs of the nodes that attempt the transmiss
 spd_set=v;
 % spd_set=0;
 
-old_pos= rand(1,10)*1000;
+old_pos= rand(1,20)*1000;
 Txnode = find(Mac.Bk_cnt==dt_temp);% find the time of the first transmission attempt 
 Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;% all backoff counters are decremented 
 Sim.time= Sim.time+ dt_temp*Phy.sigma;% update the simulation time accordingly
