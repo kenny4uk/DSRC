@@ -1,4 +1,4 @@
-function alg_sample(spd_set)
+function alg_sample(spdavg_set)
 
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
@@ -15,7 +15,7 @@ Sample.sample_time=10/100; % 10% of transmission time used for sampling, sending
 Sample.stale_failure_timeout=10; % stale consecutive 4 failures timeout 10 seconds;
 Sample.min_switch=1; % minimal switch time 1 second.
 Sample.smoothing_rate=0.95; % ewma percentage (out of 100) 
-Sample.rate_first_series=5; % set up the transmit rate for first serier of transmissions with the sampling rate. the remaining rate set to the lowest one.
+Sample.rate_first_series=12; % set up the transmit rate for first serier of transmissions with the sampling rate. the remaining rate set to the lowest one.
 
   % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
   Sim.tstart = clock;
@@ -26,6 +26,7 @@ x_max=1000;% maximum range within which nodes can transmit
  v= 0;% vehicle moving with constant speed for zero mobililty
 old_pos= 0;
 Phy.Ts=0.0;
+
 
 Sample.t_slot = 9*10^(-6);
 Sample.t_sifs = 16*10^(-6);
@@ -63,12 +64,9 @@ end
       
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
       Phy.Ts=0.001;
-%       v= 20;
-%  v=rand(1,50)*70;
-spd_set=v;
-% spd_set=0;
-
-       old_pos= rand(1,50)*1000;
+%       v= 20; 
+%       v=rand(1,20)*70;
+       old_pos= rand(1,10)*1000;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
       Sim.time = Sim.time+ dt_temp*Sample.t_slot;       % update the simulation time accordingly
@@ -76,7 +74,8 @@ spd_set=v;
       sTxnode = length(Txnode);                                       % sTxnode = number of simultaneously transmitting nodes
       Pk.tx(Txnode)=Pk.tx(Txnode)+1;
       old_pos=w;
-      Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;      
+      Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;
+      spdavg_set=v;
       
       % find rate for each transmission node if the transmission is the first attempt;
       for ii=1:sTxnode
@@ -107,12 +106,17 @@ spd_set=v;
       if sTxnode>1        % if sTxnode > 1 => Collision occurs
         St.fail(Txnode)=1; 
         St.col(Txnode)=1;
+        w =p_mob(Phy.Ts,v,old_pos,x_max);
         Pk.col(Txnode)= Pk.col(Txnode)+ 1;     % total number of collided packets is updated;
-  
-        Phy.Tc(Txnode)=Sample.Tc_over+ 8*App.lave./temp_rate(Txnode);
+         Phy.Tc(Txnode)=Sample.Tc_over+ 8*App.lave./temp_rate(Txnode);
         Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;
+        Phy.Ts=0.002;
         maxTc=max(Phy.Tc(Txnode));                  % we need to know how long the collision is going to last 
+          old_pos=w;
         Sim.time= Sim.time + maxTc;                   % and update the simulation time subsequently
+        spdavg_set=v;
+      
+        
       elseif sTxnode==1
         % process BER and check if pkt can be accepted due to ber.
         if 0 %temp_rate(Txnode)>5 
@@ -136,11 +140,13 @@ spd_set=v;
           St.fail(Txnode)=1; 
           St.col(Txnode)=0;
           St.per(Txnode)=1; 
-          Phy.Ts=0.002;
+          Phy.Ts=0.003;
 %           v= 30;
-%  v=rand(1,50)*70;
-spd_set=v;
-            w =p_mob(Phy.Ts,v,old_pos,x_max);
+          spdavg_set=v;
+
+% v=rand(1,20)*70;
+      
+          w =p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.per(Txnode)=Pk.per(Txnode)+1;
           old_pos=w;
           Phy.Tc(Txnode)=Sample.Tc_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
@@ -150,11 +156,10 @@ spd_set=v;
           St.fail(Txnode)=0; 
           St.col(Txnode)=0;
           St.per(Txnode)=0; 
-          Phy.Ts=0.003;
+          Phy.Ts=0.004;
 %           v= 40;
-%  v=rand(1,50)*70;
-
-
+%  v=rand(1,20)*70;
+    spdavg_set=v;
            w =p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
@@ -168,7 +173,7 @@ spd_set=v;
           Sstats.last_tx_suc(Txnode)=1; % record the success of this transmission.
         end; % if Bper
       end % if sTxnode>1
-
+     
       for ii=1:sTxnode
         iTx=Txnode(ii);
         if (Sstats.last_tx_suc(iTx)==1 | Sstats.last_tx_tries(iTx)==(Mac.nRetry_max+1))
@@ -236,7 +241,7 @@ spd_set=v;
   Static.pk_col = sum([Pk.col])/( sum([Pk.tx]));                  % collision probability
   Static.pk_suc = sum([Pk.suc])/( sum([Pk.tx]));                  % collision probability
   Static.pk_per = sum([Pk.per])/( sum([Pk.tx]));                  % collision probability  
-  Static.through=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
+  Static.Pk_thr=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
   Static.energyeff=sum([Pk.power])/sum([Pk.bit]);            % average energy efficiency.
   
   if 0 & Sim.debug_sample_sim==1
@@ -343,14 +348,21 @@ global Sim Mac Sample Sstats;
 			if (Sstats.packets_total(node_id,  size_bin)<1 | best_ndx == -1) 
 				% no packet has been sent successfully yet, so pick an rssi-appropriate bit-rate. 
         % We know if the rssi is very low that the really high bit rates will not work.
-				initial_rate = 24; 
-        Sstats.chn_avgrssi(node_id)=24; % here we simply set the avgrssi value, which can be amended later.
-				if (Sstats.chn_avgrssi(node_id) > 27)
-					initial_rate = 54; % 54 mbps */
-        elseif (Sstats.chn_avgrssi(node_id) > 18) 
-					initial_rate = 24; % 24 mbps */
+% 				initial_rate = 36; 
+                initial_rate = 24; 
+%         Sstats.chn_avgrssi(node_id)=36; % here we simply set the avgrssi value, which can be amended later.
+        Sstats.chn_avgrssi(node_id)=24; % here we simply set the avgrssi value, which can be amended later
+% 				if (Sstats.chn_avgrssi(node_id) > 50)
+                    if (Sstats.chn_avgrssi(node_id) > 27)
+					initial_rate = 54; % 27 mbps */
+%                     initial_rate = 108; % 54 mbps */
+%         elseif (Sstats.chn_avgrssi(node_id) > 30) 
+            elseif (Sstats.chn_avgrssi(node_id) > 18)
+% 					initial_rate = 36; % 36 mbps */
+                    initial_rate = 24; % 24 mbps */
         else
-					initial_rate = 3;  % 3 mbps */
+% 					initial_rate = 12;  % 12 mbps */
+                    initial_rate = 3;  % 3 mbps */
         end
 
 				for (ndx= Sample.num_rate:-1:1) 

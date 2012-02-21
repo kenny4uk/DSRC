@@ -20,19 +20,23 @@ par_config_all;
 Sim.iternum0=2; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=2; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:50];
-%  n=5;
-% speed=randi(70,1,n);% speed of vehicle
-spdavg=40;% Average speed of each vehicle i km/h
-spd_min=spdavg*0.75;%This is the minimum speed required for each vehicle
-spd_max=spdavg*1.25;
-spd_set=[spdavg*0.75:4.01:spdavg*1.25];
-% spd_set=[31:40];% speed of vehicle
-% spd_set=mean(speed,1);
-% spd_set=0;
-% spd_set=random('norm',32,1,10)% this is mean without standard deviation
-% spd_set=random('norm',40,sqrt(2),1,10)%this is for mean and standard deviation
-sSpd =length(spd_set);
+Sim.node_set=[1:10];
+  
+% for i=1:n
+%     spd_set(i)=rand(1)*70;
+%     
+% end
+% speed=rand(5,1)*70;
+% speed=ceil(n.*rand(10,10));
+spdavg_set=[20 30 40 50 60];%Average speed of each vehicle in km/h
+% spd_min=spdavg*0.75;%This is the minimum speed for each vehicle
+% spd_max=spdavg*1.25;%This the maximum speed for each vehicle
+% spd_set=[spdavg*0.75:1.8:spdavg*1.25];
+% spd_set=[41:60];% speed of vehicle in Km/h
+sSpd =length(spdavg_set);
+for i=1:5
+    speed=rand(1,10)*spdavg_set(i)*0.5+spdavg_set(i)*0.75;
+end
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
 Sim.cal_aarf=1; 
@@ -50,7 +54,7 @@ bl_epssave=1;
 App.lave=1500;      % the average packet length in bytes used in [2]
 
 % SNR and PER 
-Phy.snr_set=[30 35];
+Phy.snr_set=[30 35 ];
 % Phy.snr_set=[55];
 sSnr=length(Phy.snr_set);
 
@@ -91,7 +95,7 @@ for idx_period=1:sPeriodset
 for idx_node=1:sNode
 for idx_snr=1:sSnr    
 for idx_start=1:sStart
-% for idx_spd=1:sSpd  
+for idx_spd=1:sSpd  
 
     Onoe.period=Onoe.period_set(idx_period);
     Sim.n=Sim.node_set(idx_node);                       % number of nodes in the BSS
@@ -126,7 +130,8 @@ for idx_start=1:sStart
   pk_tx_aarf_iter=zeros(1, iter_num);
   pk_col_aarf_iter=zeros(1, iter_num);
   pk_suc_aarf_iter=zeros(1, iter_num);         
-  pk_per_aarf_iter=zeros(1, iter_num);          
+  pk_per_aarf_iter=zeros(1, iter_num);
+  pk_thr_aarf_iter=zeros(1, iter_num); 
 % %   
 %   thr_onoe_iter=zeros(1, iter_num);
 %   eneff_onoe_iter=zeros(1,iter_num);
@@ -142,7 +147,8 @@ for idx_start=1:sStart
   pk_tx_sample_iter=zeros(1, iter_num);
   pk_col_sample_iter=zeros(1, iter_num);
   pk_suc_sample_iter=zeros(1, iter_num);     
-  pk_per_sample_iter=zeros(1, iter_num);                  
+  pk_per_sample_iter=zeros(1, iter_num);
+  pk_thr_sample_iter=zeros(1, iter_num); 
 
   for idx_iter=1: iter_num
       disp('---------------------------------------------------------------');
@@ -189,7 +195,7 @@ for idx_start=1:sStart
 %               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
 %           disp(['Simulation Sample: n=',num2str(Sim.n),', spd =',num2str(s.spd) ', startrate=' num2str(Startrate_mode(idx_start)) ...
 %               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
-          disp(['Simulation Sample: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
+          disp(['Simulation SampleRate: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
 
           for ii=1:Sim.n; 
@@ -197,8 +203,8 @@ for idx_start=1:sStart
             Trace_sample(ii).suc=[]; Trace_sample(ii).col=[]; Trace_sample(ii).per=[]; 
           end;
 %           
-          alg_sample(spd_set);
-          thr_sample_iter(idx_iter)=Static.through;
+          alg_sample(spdavg_set);
+          thr_sample_iter(idx_iter)=Static.Pk_thr;
           eneff_sample_iter(idx_iter)=Static.energyeff;          
           col_sample_iter(idx_iter)=Static.pk_col;
           suc_sample_iter(idx_iter)=Static.pk_suc;
@@ -206,7 +212,8 @@ for idx_start=1:sStart
           pk_tx_sample_iter(idx_iter)= mean(Pk.tx);
           pk_col_sample_iter(idx_iter)=  mean(Pk.col);
           pk_suc_sample_iter(idx_iter)=  mean(Pk.suc);          
-          pk_per_sampe_iter(idx_iter)=  mean(Pk.per);  
+          pk_per_sample_iter(idx_iter)=  mean(Pk.per); 
+          pk_thr_sample_iter(idx_iter)=  mean(Pk.thr);
 
           Static
       end
@@ -217,15 +224,16 @@ for idx_start=1:sStart
            disp(['Simulation AARF: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
 
-          alg_aarf1(spd_set);
-         thr_aarf_iter(idx_iter)=Static.through;
+          alg_aarf1(spdavg_set);
+         thr_aarf_iter(idx_iter)=Static.Pk_thr;
           eneff_aarf_iter(idx_iter)=Static.energyeff;
           col_aarf_iter(idx_iter)=Static.pk_col;
           suc_aarf_iter(idx_iter)=Static.pk_suc;
           pk_tx_aarf_iter(idx_iter)=  mean(Pk.tx);
           pk_col_aarf_iter(idx_iter)=  mean(Pk.col);
           pk_suc_aarf_iter(idx_iter)=  mean(Pk.suc);          
-          pk_per_aarf_iter(idx_iter)=  mean(Pk.per);                    
+          pk_per_aarf_iter(idx_iter)=  mean(Pk.per);
+          pk_thr_aarf_iter(idx_iter)=  mean(Pk.thr);
         
           Static          
       end
@@ -262,7 +270,7 @@ for idx_start=1:sStart
 %   end
   
    if Sim.cal_sample
-      thr_sample(idx_node, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
+      thr_sample(idx_spd, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
       eneff_sample(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_sample_iter);      
       col_sample(idx_node, idx_snr, idx_period, idx_start)= mean(col_sample_iter);
       suc_sample(idx_node, idx_snr, idx_period, idx_start)= mean(suc_sample_iter);
@@ -273,7 +281,7 @@ for idx_start=1:sStart
       pk_suc_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_sample_iter); 
       pk_per_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_sample_iter);       
       
-      thr_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
+      thr_sample_std(idx_spd, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
       eneff_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_sample_iter);      
       col_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(col_sample_iter);
       suc_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(suc_sample_iter);
@@ -288,12 +296,12 @@ for idx_start=1:sStart
 %       disp(['Simulation Sample: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
 %           ', throughput=', num2str(mean(thr_sample_iter))]);  % Just in case
       
-       disp(['Simulation Sample: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
+       disp(['Simulation SampleRate: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
    end
   
       if Sim.cal_aarf
-      thr_aarf(idx_node, idx_snr, idx_start)= mean(thr_aarf_iter);
+      thr_aarf(idx_spd, idx_snr, idx_period, idx_start)= mean(thr_aarf_iter);
       eneff_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_aarf_iter);      
       col_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(col_aarf_iter);
       suc_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(suc_aarf_iter);
@@ -303,7 +311,7 @@ for idx_start=1:sStart
       pk_suc_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_aarf_iter); 
       pk_per_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_aarf_iter);       
       
-      thr_aarf_std(idx_node, idx_snr, idx_start)= std(thr_aarf_iter);
+      thr_aarf_std(idx_spd, idx_snr, idx_start)= std(thr_aarf_iter);
       eneff_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(eneff_aarf_iter);      
       col_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(col_aarf_iter);
       suc_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(suc_aarf_iter);
@@ -320,7 +328,7 @@ for idx_start=1:sStart
        disp(['Simulation AARF: n=',num2str(Sim.n),',  startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
   end
-% end %for idx_spd 
+ end %for idx_spd 
 end % for idx_start
 end % for idx_snr  
 end % for idx_node

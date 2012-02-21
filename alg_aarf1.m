@@ -1,4 +1,4 @@
-function alg_aarf1(spd_set)
+function alg_aarf1(spdavg_set)
 
 global Sim App Mac Phy Rate Arf Onoe Markov Pk;
 global St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per Static;
@@ -28,11 +28,8 @@ while sum([Pk.suc])<=Sim.pk,
 dt_temp = min(Mac.Bk_cnt);% Txnode = IDs of the nodes that attempt the transmission
  Phy.Ts=0.001;
 %  v= 20;
-%  v=rand(1,10)*70;
-spd_set=v;
-% spd_set=0;
-
-old_pos= rand(1,50)*1000;
+%  v=rand(1,20)*70;
+old_pos= rand(1,10)*1000;
 Txnode = find(Mac.Bk_cnt==dt_temp);% find the time of the first transmission attempt 
 Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;% all backoff counters are decremented 
 Sim.time= Sim.time+ dt_temp*Phy.sigma;% update the simulation time accordingly
@@ -40,7 +37,7 @@ w =p_mob(Phy.Ts,v,old_pos,x_max);
 sTxnode = length(Txnode);% sTxnode = number of simultaneously transmitting nodes
 Pk.tx(Txnode)=Pk.tx(Txnode)+1;
 old_pos=w;
-
+spdavg_set=v;
  % we distringuish two possible events at this slot time 
 if Txnode>1% if sTxnode > 1 => Collision occurs
 St.fail(Txnode)=1; 
@@ -65,8 +62,7 @@ St.col(Txnode)=0;
 St.per(Txnode)=1; 
 Phy.Ts=0.002;
 % v=30;
-%  v=rand(1,10)*70;
-
+%  v=rand(1,20)*70;
 w =p_mob(Phy.Ts,v,old_pos,x_max);
 Pk.per(Txnode)=Pk.per(Txnode)+1;
 old_pos=w;
@@ -74,6 +70,7 @@ Phy.Ts(Txnode)=(Phy.Lc_over+8*App.lave)./Rate.curr(Txnode);% how long does it ta
 Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;  
 
 Sim.time = Sim.time + Phy.Ts(Txnode);% update the simulation time 
+spdavg_set=v;
                     
 %-----------------------------------------------------------------
  else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
@@ -83,9 +80,7 @@ St.per(Txnode)=0;
 Pk.suc(Txnode) = Pk.suc(Txnode)+1;% update number of sent packets  
 Phy.Ts=0.003;
 %  v= 40;
-%  v=rand(1,10)*70;
-spd_set=v;
-
+%  v=rand(1,20)*70;
 w =p_mob(Phy.Ts,v,old_pos,x_max);
 old_pos=w;
 Phy.Ts(Txnode)=(Phy.Ls_over+8*App.lave)./Rate.curr(Txnode);% how long does it take to transmit it with success? 
@@ -93,17 +88,16 @@ Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
 Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
 Phy.Ts=0.004;   
 %  v= 50;
-%  v=rand(1,10)*70;
-
-spd_set=v;
+%  v=rand(1,20)*70;
 w =p_mob(Phy.Ts,v,old_pos,x_max);
 old_pos=w;
 Sim.time = Sim.time + Phy.Ts(Txnode);% update the simulation time 
+spdavg_set=v;
 
 %ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 
 App.birthtime(Txnode) = Sim.time;  % and store the time this packet entered service
+
  end; % if Bper
-      
 end % if sTxnode>1
 for ii=1:sTxnode
       iTx=Txnode(ii);
@@ -185,7 +179,7 @@ end; %   while sum(Pksuc)<n*mpck,...,end
   Static.pk_col = sum([Pk.col])/( sum([Pk.tx]));                  % collision probability
 Static.pk_suc = sum([Pk.suc])/( sum([Pk.tx]));                  % collision probability
 Static.pk_per = sum([Pk.per])/( sum([Pk.tx]));                  % collision probability  
-Static.through=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
+Static.Pk_thr=sum([Pk.suc])*App.lave*8/Sim.time;            % average throughput.
 Static.energyeff=sum([Pk.power])/sum([Pk.bit]);            % average energy efficiency.
 
 if 0
