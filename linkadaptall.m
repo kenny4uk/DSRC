@@ -9,10 +9,10 @@ style_plot='- --: -.'; %% two character represent one line style;
 color_plot='k b g c m y r';
 font_size=16; line_width=1.6;
 for idx_period=1:sPeriodset
-% for idx_snr=1: sSnr    
+for idx_snr=1: sSnr    
 for idx_start=1:sStart    
 for idx_node=1:sNode
-for idx_spd=1:sSpd  
+% for idx_spd=1:sSpd  
         
 %     v=[ 20 30 40 50];% speed of vehicle in km/h
 %  v=rand(1,20)*70;
@@ -39,15 +39,15 @@ for idx_spd=1:sSpd
     % 
       
        if Sim.cal_aarf
-      plot_thr_aarf(idx_spd)=thr_aarf(idx_spd, idx_period, idx_start);
-      plot_col_aarf(idx_node)=col_aarf(idx_node, idx_snr, idx_period, idx_start);
-      plot_suc_aarf(idx_node)=suc_aarf(idx_node, idx_snr, idx_period, idx_start);
+      plot_thr_aarf(idx_spd)=thr_aarf(idx_spd,idx_snr, idx_period, idx_start);
+      plot_col_aarf(idx_spd)=col_aarf(idx_spd,idx_snr, idx_period, idx_start);
+      plot_suc_aarf(idx_spd)=suc_aarf(idx_spd,idx_snr, idx_period, idx_start);
        end
       
       if Sim.cal_sample
-      plot_thr_sample(idx_spd)=thr_sample(idx_spd, idx_period, idx_start);
-      plot_col_sample(idx_node)=col_sample(idx_node, idx_snr, idx_period, idx_start);
-      plot_suc_sample(idx_node)=suc_sample(idx_node, idx_snr, idx_period, idx_start);
+      plot_thr_sample(idx_spd)=thr_sample(idx_spd,idx_snr, idx_period, idx_start);
+      plot_col_sample(idx_spd)=col_sample(idx_spd,idx_snr, idx_period, idx_start);
+      plot_suc_sample(idx_spd)=suc_sample(idx_spd,idx_snr, idx_period, idx_start);
       
       end
       
@@ -81,13 +81,13 @@ for idx_spd=1:sSpd
 
 % plot(Sim.node_set, plot_thr_onoe, ['r' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
 %     hold on;
-   plot(spdavg_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr,len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+   plot(spd_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr,len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
 %     hold on; 
 %    plot(Phy.snr_set, plot_thr_aarf, ['b' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
     hold on; 
-   plot(spdavg_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr,len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
+   plot(spd_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr,len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width);
      hold on; grid on;
-%       xlabel('Number of nod
+%       xlabel('Number of nodes');
 %       ylabel('Throughput');
 
 %   end
@@ -99,8 +99,8 @@ for idx_spd=1:sSpd
       hold on;
 grid on;
 
-end%for idx_spd
+% end%for idx_spd
 end%  for idx_node  
 end % for idx_start  
-% end % for idx_snr  
+end % for idx_snr  
 end % for idx_period

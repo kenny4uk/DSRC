@@ -1,8 +1,8 @@
-function alg_sample(spdavg_set)
+function alg_sample(speed)
 
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
-
+global sNode;
 par_init;
 
 % parameters for algorithm Sample===================================================
@@ -66,7 +66,7 @@ end
       Phy.Ts=0.001;
 %       v= 20; 
 %       v=rand(1,20)*70;
-       old_pos= rand(1,2)*1000;
+       old_pos= rand(1,sNode)*1000;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
       Sim.time = Sim.time+ dt_temp*Sample.t_slot;       % update the simulation time accordingly
@@ -75,7 +75,8 @@ end
       Pk.tx(Txnode)=Pk.tx(Txnode)+1;
       old_pos=w;
       Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;
-      spdavg_set=v;
+%       spdavg_set=v;
+     speed=v;
       
       % find rate for each transmission node if the transmission is the first attempt;
       for ii=1:sTxnode
@@ -114,7 +115,7 @@ end
         maxTc=max(Phy.Tc(Txnode));                  % we need to know how long the collision is going to last 
           old_pos=w;
         Sim.time= Sim.time + maxTc;                   % and update the simulation time subsequently
-        spdavg_set=v;
+        spd_set=v;
       
         
       elseif sTxnode==1
@@ -142,7 +143,7 @@ end
           St.per(Txnode)=1; 
           Phy.Ts=0.003;
 %           v= 30;
-          spdavg_set=v;
+         speed=v;
 
 % v=rand(1,20)*70;
       
@@ -159,7 +160,7 @@ end
           Phy.Ts=0.004;
 %           v= 40;
 %  v=rand(1,20)*70;
-    spdavg_set=v;
+   speed=v;
            w =p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
