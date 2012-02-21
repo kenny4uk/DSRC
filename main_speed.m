@@ -20,7 +20,7 @@ par_config_all;
 Sim.iternum0=2; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=2; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:10];
+Sim.node_set=[1:2];
   
 % for i=1:n
 %     spd_set(i)=rand(1)*70;
@@ -35,7 +35,7 @@ spdavg_set=[20 30 40 50 60];%Average speed of each vehicle in km/h
 % spd_set=[41:60];% speed of vehicle in Km/h
 sSpd =length(spdavg_set);
 for i=1:5
-    speed=rand(1,10)*spdavg_set(i)*0.5+spdavg_set(i)*0.75;
+    speed=rand(1,2)*spdavg_set(i)*0.5+spdavg_set(i)*0.75;
 end
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
