@@ -1,7 +1,9 @@
-function alg_sample
+function alg_sample(spd_set)
 
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
+global sNode;
+
 
 par_init;
 
@@ -61,8 +63,9 @@ end
       end
       
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
-      v=50;
-  old_pos=rand(1,10)*1000;
+%       v=50;
+spd_set=v;
+  old_pos=rand(1,sNode)*1000;
   Phy.Ts=0.001;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
@@ -132,7 +135,8 @@ end
           St.col(Txnode)=0;
           St.per(Txnode)=1;
           Phy.Ts=0.002;
-          v=50;
+%           v=50;
+spd_set=v;
           w=p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.per(Txnode)=Pk.per(Txnode)+1;
           old_pos=w;
@@ -144,7 +148,8 @@ end
           St.col(Txnode)=0;
           St.per(Txnode)=0;  
           Phy.Ts=0.003;
-          v=50;
+%           v=50;
+spd_set=v;
           w=p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
@@ -254,7 +259,7 @@ for idx_node=1:Sim.n
 		Sstats.packets_total(idx_node,  y)= 0;
 
     % set the initial rate */
-    Sstats.current_rate(idx_node,  y)= find(Sample.rates==36);
+    Sstats.current_rate(idx_node,  y)= find(Sample.rates==12);
     Sstats.current_sample_ndx(idx_node,  y)= -1;
 		Sstats.last_sample_ndx(idx_node,  y)= 1;
 		

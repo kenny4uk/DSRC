@@ -20,9 +20,16 @@ par_config_all;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:5];
+Sim.node_set=[1:20];     
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
+spdavg_set=[70];
+spd_min=spdavg_set*0.75;%This is the minimum speed for each vehicle
+spd_max=spdavg_set*1.25;%This the maximum speed for each vehicle
+spd_set=[spdavg_set*0.75:1.8:spdavg_set*1.25];
+% spd_set=[spdavg_set*0.75:spdavg_set*1.25];
+% spd_set=[41:60];% speed of vehicle in Km/h
+sSpd =length(spd_set);
 Sim.cal_aarf=1; 
 % Sim.cal_onoe=1;
 % Sim.debug_onoe_sim=0;
@@ -38,7 +45,7 @@ bl_epssave=1;
 App.lave=1500;      % the average packet length in bytes used in [2]
 
 % SNR and PER 
-Phy.snr_set=[5 10 15 20];
+Phy.snr_set=[30];
 % Phy.snr_set=[55];
 sSnr=length(Phy.snr_set);
 
@@ -178,7 +185,7 @@ for idx_start=1:sStart
             Trace_sample(ii).suc=[]; Trace_sample(ii).col=[]; Trace_sample(ii).per=[]; 
           end;
 %           
-          alg_sample();
+          alg_sample(spd_set);
           thr_sample_iter(idx_iter)=Static.through;
           eneff_sample_iter(idx_iter)=Static.energyeff;          
           col_sample_iter(idx_iter)=Static.pk_col;
@@ -196,7 +203,7 @@ for idx_start=1:sStart
           disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
 
-          alg_aarf1();
+          alg_aarf(spd_set);
          thr_aarf_iter(idx_iter)=Static.through;
           eneff_aarf_iter(idx_iter)=Static.energyeff;
           col_aarf_iter(idx_iter)=Static.pk_col;
