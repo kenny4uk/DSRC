@@ -23,14 +23,17 @@ Sim.pk_basic=1000;     % Total number of packets to be successfully sent per sim
 Sim.node_set=[1:10];     
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
-spdavg_set=[70];
+spdavg_set=[30 40 50 60 70];
+% spdavg_set=mean(rand(1,5))*150;
 spd_min=spdavg_set*0.75;%This is the minimum speed for each vehicle
 spd_max=spdavg_set*1.25;%This the maximum speed for each vehicle
 % spd_set=spdavg_set*0.75:spdavg_set*1.25;
 % spd_set=[spdavg_set*0.75:spdavg_set*1.25];
 % spd_set=[41:60];% speed of vehicle in Km/h
-for i=1:4
-    spd_set=mean(rand(5,5))*spdavg_set*0.75:spdavg_set*1.25;
+for i=1:5
+    spd_set=rand(1,10)*spdavg_set(i)*0.5+spdavg_set(i)*0.75;
+    
+%     spd_set=spdavg_set*0.75:spdavg_set*1.25;
 end
 sSpd =length(spd_set);
 Sim.cal_aarf=1; 
