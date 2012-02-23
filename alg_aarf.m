@@ -3,7 +3,7 @@ function alg_aarf(spd_set)
 global Sim App Mac Phy Rate Arf Onoe;
 global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per Static;
 global sNode;
- 
+ global spd_set;
 par_init;
 % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
 Sim.tstart = clock;
@@ -23,6 +23,7 @@ while sum([Pk.suc])<=Sim.pk,
     Phy.Ts=0.001;
 %     v=20;
 spd_set=v;
+
     old_pos=rand(1,sNode)*1000;
     Txnode = find(Mac.Bk_cnt==dt_temp);  % find the time of the first transmission attempt 
     Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;    % all backoff counters are decremented 
@@ -55,6 +56,7 @@ spd_set=v;
         Phy.Ts=0.002;
 %    v=20;  
 spd_set=v;
+
 %   w= rand_pos_mob(Sim.node_set,Phy.Ts,v,sTxnode,x_max);
   w=p_mob(Phy.Ts,v,old_pos,x_max)
    Pk.per(Txnode)=Pk.per(Txnode)+1;
@@ -70,6 +72,7 @@ spd_set=v;
         Phy.Ts=0.003;
 %         v=20;
 spd_set=v;
+
        %w = rand_pos_mob(Sim.node_set,Phy.Ts,v,old_pos,x_max)
          w=p_mob(Phy.Ts,v,old_pos,x_max);
           old_pos=w;

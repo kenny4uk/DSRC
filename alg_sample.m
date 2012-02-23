@@ -3,7 +3,7 @@ function alg_sample(spd_set)
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
 global sNode;
-
+global spd_set;
 
 par_init;
 
@@ -65,6 +65,7 @@ end
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
 %       v=50;
 spd_set=v;
+
   old_pos=rand(1,sNode)*1000;
   Phy.Ts=0.001;
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
@@ -137,6 +138,7 @@ spd_set=v;
           Phy.Ts=0.002;
 %           v=50;
 spd_set=v;
+
           w=p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.per(Txnode)=Pk.per(Txnode)+1;
           old_pos=w;
@@ -150,6 +152,7 @@ spd_set=v;
           Phy.Ts=0.003;
 %           v=50;
 spd_set=v;
+
           w=p_mob(Phy.Ts,v,old_pos,x_max);
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 

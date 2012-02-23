@@ -17,18 +17,21 @@ hh=datevec(now);
 par_config_all;
 
 % Sim.iternum=1; % number of iterations for a fixed simulation scenario.
-Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
-Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
+Sim.iternum0=2; % number of iterations for a fixed simulation scenario.
+Sim.iternum1=2; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1000;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[1:20];     
+Sim.node_set=[1:10];     
 % Sim.node_set=[1];
 sNode=length(Sim.node_set);
 spdavg_set=[70];
 spd_min=spdavg_set*0.75;%This is the minimum speed for each vehicle
 spd_max=spdavg_set*1.25;%This the maximum speed for each vehicle
-spd_set=[spdavg_set*0.75:1.8:spdavg_set*1.25];
+% spd_set=spdavg_set*0.75:spdavg_set*1.25;
 % spd_set=[spdavg_set*0.75:spdavg_set*1.25];
 % spd_set=[41:60];% speed of vehicle in Km/h
+for i=1:4
+    spd_set=mean(rand(5,5))*spdavg_set*0.75:spdavg_set*1.25;
+end
 sSpd =length(spd_set);
 Sim.cal_aarf=1; 
 % Sim.cal_onoe=1;
@@ -85,7 +88,8 @@ sPeriodset=length(Onoe.period_set);
 for idx_period=1:sPeriodset
 for idx_node=1:sNode
 for idx_snr=1:sSnr    
-for idx_start=1:sStart    
+for idx_start=1:sStart
+for idx_spd=1:sSpd
 
     Onoe.period=Onoe.period_set(idx_period);
     Sim.n=Sim.node_set(idx_node);                       % number of nodes in the BSS
@@ -248,27 +252,27 @@ for idx_start=1:sStart
 %   end
   
    if Sim.cal_sample
-      thr_sample(idx_node, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
-      eneff_sample(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_sample_iter);      
-      col_sample(idx_node, idx_snr, idx_period, idx_start)= mean(col_sample_iter);
-      suc_sample(idx_node, idx_snr, idx_period, idx_start)= mean(suc_sample_iter);
-      per_sample(idx_node, idx_snr, idx_period, idx_start)= mean(per_sample_iter);
+      thr_sample(idx_spd, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
+      eneff_sample(idx_spd, idx_snr, idx_period, idx_start)= mean(eneff_sample_iter);      
+      col_sample(idx_spd, idx_snr, idx_period, idx_start)= mean(col_sample_iter);
+      suc_sample(idx_spd, idx_snr, idx_period, idx_start)= mean(suc_sample_iter);
+      per_sample(idx_spd, idx_snr, idx_period, idx_start)= mean(per_sample_iter);
       
-      pk_tx_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_sample_iter); 
-      pk_col_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_sample_iter); 
-      pk_suc_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_sample_iter); 
-      pk_per_sample(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_sample_iter);       
+      pk_tx_sample(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_tx_sample_iter); 
+      pk_col_sample(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_col_sample_iter); 
+      pk_suc_sample(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_suc_sample_iter); 
+      pk_per_sample(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_per_sample_iter);       
       
-      thr_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
-      eneff_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_sample_iter);      
-      col_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(col_sample_iter);
-      suc_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(suc_sample_iter);
-      per_sample_std(idx_node, idx_snr, idx_period, idx_start)= mean(per_sample_iter);
+      thr_sample_std(idx_spd, idx_snr, idx_period, idx_start)= mean(thr_sample_iter);
+      eneff_sample_std(idx_spd, idx_snr, idx_period, idx_start)= mean(eneff_sample_iter);      
+      col_sample_std(idx_spd, idx_snr, idx_period, idx_start)= mean(col_sample_iter);
+      suc_sample_std(idx_spd, idx_snr, idx_period, idx_start)= mean(suc_sample_iter);
+      per_sample_std(idx_spd, idx_snr, idx_period, idx_start)= mean(per_sample_iter);
       
-      pk_tx_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_sample_iter); 
-      pk_col_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_sample_iter); 
-      pk_suc_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_sample_iter); 
-      pk_per_sample_std(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_sample_iter);       
+      pk_tx_sample_std(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_tx_sample_iter); 
+      pk_col_sample_std(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_col_sample_iter); 
+      pk_suc_sample_std(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_suc_sample_iter); 
+      pk_per_sample_std(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_per_sample_iter);       
       
       % disp('---------------------------------------------------------------');
       disp(['Simulation Sample: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
@@ -276,32 +280,32 @@ for idx_start=1:sStart
    end
   
       if Sim.cal_aarf
-      thr_aarf(idx_node, idx_snr, idx_start)= mean(thr_aarf_iter);
-      eneff_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(eneff_aarf_iter);      
-      col_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(col_aarf_iter);
-      suc_aarf(idx_node, idx_snr, idx_period, idx_start)= mean(suc_aarf_iter);
+      thr_aarf(idx_spd, idx_snr, idx_start)= mean(thr_aarf_iter);
+      eneff_aarf(idx_spd, idx_snr, idx_period, idx_start)= mean(eneff_aarf_iter);      
+      col_aarf(idx_spd, idx_snr, idx_period, idx_start)= mean(col_aarf_iter);
+      suc_aarf(idx_spd, idx_snr, idx_period, idx_start)= mean(suc_aarf_iter);
 
-      pk_tx_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_tx_aarf_iter); 
-      pk_col_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_col_aarf_iter); 
-      pk_suc_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_suc_aarf_iter); 
-      pk_per_aarf(idx_node, idx_snr, idx_period, idx_start)=mean(pk_per_aarf_iter);       
+      pk_tx_aarf(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_tx_aarf_iter); 
+      pk_col_aarf(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_col_aarf_iter); 
+      pk_suc_aarf(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_suc_aarf_iter); 
+      pk_per_aarf(idx_spd, idx_snr, idx_period, idx_start)=mean(pk_per_aarf_iter);       
       
-      thr_aarf_std(idx_node, idx_snr, idx_start)= std(thr_aarf_iter);
-      eneff_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(eneff_aarf_iter);      
-      col_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(col_aarf_iter);
-      suc_aarf_std(idx_node, idx_snr, idx_period, idx_start)= std(suc_aarf_iter);
+      thr_aarf_std(idx_spd, idx_snr, idx_start)= std(thr_aarf_iter);
+      eneff_aarf_std(idx_spd, idx_snr, idx_period, idx_start)= std(eneff_aarf_iter);      
+      col_aarf_std(idx_spd, idx_snr, idx_period, idx_start)= std(col_aarf_iter);
+      suc_aarf_std(idx_spd, idx_snr, idx_period, idx_start)= std(suc_aarf_iter);
 
-      pk_tx_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_tx_aarf_iter); 
-      pk_col_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_col_aarf_iter); 
-      pk_suc_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_suc_aarf_iter); 
-      pk_per_aarf_std(idx_node, idx_snr, idx_period, idx_start)=std(pk_per_aarf_iter);       
+      pk_tx_aarf_std(idx_spd, idx_snr, idx_period, idx_start)=std(pk_tx_aarf_iter); 
+      pk_col_aarf_std(idx_spd, idx_snr, idx_period, idx_start)=std(pk_col_aarf_iter); 
+      pk_suc_aarf_std(idx_spd, idx_snr, idx_period, idx_start)=std(pk_suc_aarf_iter); 
+      pk_per_aarf_std(idx_spd, idx_snr, idx_period, idx_start)=std(pk_per_aarf_iter);       
       
 
       % disp('---------------------------------------------------------------');
       disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
           ', throughput=', num2str(mean(thr_aarf_iter))]);  % Just in case
   end
-  
+end % for idx_spd
 end % for idx_start
 end % for idx_snr  
 end % for idx_node

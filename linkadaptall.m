@@ -12,7 +12,8 @@ font_size=13; line_width=1.6;
 for idx_period=1:sPeriodset
 for idx_snr=1:sSnr    
 for idx_start=1:sStart
-for idx_node=1:sNode
+ for idx_node=1:sNode
+for idx_spd=1:sSpd
     
   Sim.n=Sim.node_set(idx_node);                       % number of nodes in the BSS
   Rate.start=Rate.set(ceil(rand(1,Sim.n)*sRset));  
@@ -26,11 +27,12 @@ for idx_node=1:sNode
   Onoe.creditinc_retthr=0.1;     % variable for onoe, thresh on percentage of pks requiring retry to increase or decrease a credit.
   Onoe.period=0.2;                                         % observation time: 1 sec in defaul.
 
-  for idx_node=1:sNode
+%   for idx_node=1:sNode
+    for idx_sSpd=1:sSpd
       if Sim.cal_aarf
-      plot_thr_aarf(idx_node)=thr_aarf(idx_node, idx_snr, idx_period, idx_start);
-      plot_col_aarf(idx_node)=col_aarf(idx_node, idx_snr, idx_period, idx_start);
-      plot_suc_aarf(idx_node)=suc_aarf(idx_node, idx_snr, idx_period, idx_start);
+      plot_thr_aarf(idx_sSpd)=thr_aarf(idx_sSpd, idx_snr, idx_period, idx_start);
+      plot_col_aarf(idx_sSpd)=col_aarf(idx_sSpd, idx_snr, idx_period, idx_start);
+      plot_suc_aarf(idx_sSpd)=suc_aarf(idx_sSpd, idx_snr, idx_period, idx_start);
       end
       
 %       if Sim.cal_onoe
@@ -46,9 +48,9 @@ for idx_node=1:sNode
 %       end
 % 
       if Sim.cal_sample
-      plot_thr_sample(idx_node)=thr_sample(idx_node, idx_snr, idx_period, idx_start);
-      plot_col_sample(idx_node)=col_sample(idx_node, idx_snr, idx_period, idx_start);
-      plot_suc_sample(idx_node)=suc_sample(idx_node, idx_snr, idx_period, idx_start);
+      plot_thr_sample(idx_sSpd)=thr_sample(idx_sSpd, idx_snr, idx_period, idx_start);
+      plot_col_sample(idx_sSpd)=col_sample(idx_sSpd, idx_snr, idx_period, idx_start);
+      plot_suc_sample(idx_sSpd)=suc_sample(idx_sSpd, idx_snr, idx_period, idx_start);
       end
       
   end
@@ -69,6 +71,7 @@ for idx_node=1:sNode
        hold on; 
        plot(spd_set, plot_thr_sample, ['g' symbol_plot( rem(idx_snr, len_symbol) ) style_plot(1+(1-1)*2) style_plot(2+(1-1)*2)], 'LineWidth', line_width); 
       hold on;      grid on;
+      title('Throughput vs Average speed ');
       xlabel('Number of nodes');   ylabel('System throughput (bits/second)');
       % pause;
       %legend(['SNR: ' num2str(Phy.snr_set(1))] , ['SNR: ' num2str(Phy.snr_set(2))], ['SNR: ' num2str(Phy.snr_set(3))]);
@@ -87,7 +90,8 @@ for idx_node=1:sNode
  xlabel('Average speed of vehicles (Km /h)');   ylabel('System throughput (bits/second)');
      legend('aarf','SampleRate');
           hold on; grid on;
-end % for idx_node
+end%for idx_spd
+ end % for idx_node
 end % for idx_start  
 end % for idx_snr  
 end % for idx_period
