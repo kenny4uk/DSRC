@@ -4,7 +4,7 @@ function Par_init
   global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per Static;
 
   % Initialization variables
-  mobile=[];
+  Static=[];
   Mac.W=Mac.Wmin*ones(1,Sim.n);
   Mac.Bk_cnt=   floor(Mac.Wmin*rand(1,Sim.n));   % congestion window size vector: one row per node
   Sim.ws=   zeros(1,Sim.pk);              % service waiting time matrix: one row per node; one column per packet
@@ -33,6 +33,7 @@ function Par_init
   Pk.tx= zeros(1,Sim.n);            % total number of transmission attempts
   Pk.drop= zeros(1,Sim.n);        % total number of packets dropped due to excessive retries.
   Pk.per= zeros(1,Sim.n);
+  Pk.thr=zeros(1,Sim.n);
   Pk.power=zeros(1,Sim.n);     % total transmit power consumed for transmitting the packets.
   Pk.bit=zeros(1,Sim.n);
   

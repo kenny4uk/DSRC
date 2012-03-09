@@ -1,9 +1,7 @@
-function alg_sample(spd_set)
+function alg_sample(spdavg_set)
 
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
-global sNode;
-global spd_set;
 
 par_init;
 
@@ -20,17 +18,19 @@ Sample.smoothing_rate=0.95; % ewma percentage (out of 100)
 Sample.rate_first_series=5; % set up the transmit rate for first serier of transmissions with the sampling rate. the remaining rate set to the lowest one.
 
   % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
-  Sim.tstart = clock;
-  Sim.time = 0.0;                  % simulation time 
-  Sim.ratetime=0.0;
-  t=0;
-  x_max=1000;
-  v=0;
-  old_pos=0;
-  Phy.Ts=0.0;
+Sim.tstart = clock;
+Sim.time = 0.0;                  % simulation time 
+Sim.ratetime=0;
+%   t=0;
+x_max=1000;
+%   spd_set=0;
+%   old_pos=0;
+Phy.Ts=0.0;
+spd_set = rand(1, Sim.n)*spdavg_set*0.5+spdavg_set*0.75;
+
 Sample.t_slot = 9*10^(-6);
 Sample.t_sifs = 16*10^(-6);
-Sample.t_difs = 28*10^(-6);
+Sample.t_difs = 34*10^(-6);
 Sample.ack_duration=200*10^(-6);
 Sample.header_duration=20*10^(-6);
 Sample.rts_duration= 200*10^(-6); % to be changed later
@@ -63,18 +63,15 @@ end
       end
       
       dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
-%       v=50;
-spd_set=v;
-
-  old_pos=rand(1,sNode)*1000;
-  Phy.Ts=0.001;
+  old_pos=rand(1,Sim.n)*1000;
+  Phy.Ts=1000*10^(-6);% Time after which each vehicle waits before transmitting
       Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt 
       Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
       Sim.time = Sim.time+ dt_temp*Sample.t_slot;       % update the simulation time accordingly
-      w=p_mob(Phy.Ts,v,old_pos,x_max);
-      sTxnode = length(Txnode);                                       % sTxnode = number of simultaneously transmitting nodes
+           sTxnode = length(Txnode);                                       % sTxnode = number of simultaneously transmitting nodes
       Pk.tx(Txnode)=Pk.tx(Txnode)+1;
-      old_pos=w;
+       w=p_mob(Phy.Ts,spd_set,sTxnode,x_max);
+      w=old_pos;
       Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;      
       
       % find rate for each transmission node if the transmission is the first attempt;
@@ -135,13 +132,10 @@ spd_set=v;
           St.fail(Txnode)=1; 
           St.col(Txnode)=0;
           St.per(Txnode)=1;
-          Phy.Ts=0.002;
-%           v=50;
-spd_set=v;
-
-          w=p_mob(Phy.Ts,v,old_pos,x_max);
+          Phy.Ts=2000*10^(-6);
+          w=p_mob(Phy.Ts,spd_set,sTxnode,x_max);
           Pk.per(Txnode)=Pk.per(Txnode)+1;
-          old_pos=w;
+          w=old_pos;
           Phy.Tc(Txnode)=Sample.Tc_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;          
           Sim.time = Sim.time + Phy.Tc(Txnode);                 % update the simulation time 
@@ -149,15 +143,12 @@ spd_set=v;
           St.fail(Txnode)=0; 
           St.col(Txnode)=0;
           St.per(Txnode)=0;  
-          Phy.Ts=0.003;
-%           v=50;
-spd_set=v;
-
-          w=p_mob(Phy.Ts,v,old_pos,x_max);
+          Phy.Ts=3000*10^(-6);
+          w=p_mob(Phy.Ts,spd_set,sTxnode,x_max);
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
           Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
-          old_pos=w;
+          w=old_pos;
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
           Sim.time= Sim.time + Phy.Ts(Txnode);            % update the simulation time 
           % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 

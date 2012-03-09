@@ -2,6 +2,7 @@ function alg_aarf
 
 global Sim App Mac Phy Rate Arf Onoe;
 global Pk St Trace_time Trace_rate Trace_sc Trace_fc Trace_fail Trace_col Trace_suc Trace_per Static;
+global sNode;
  
 par_init;
 % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
