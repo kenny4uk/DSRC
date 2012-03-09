@@ -71,7 +71,7 @@ end
            sTxnode = length(Txnode);                                       % sTxnode = number of simultaneously transmitting nodes
       Pk.tx(Txnode)=Pk.tx(Txnode)+1;
        w=p_mob(Phy.Ts,spd_set,sTxnode,x_max);
-      w=old_pos;
+      old_pos=w;
       Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;      
       
       % find rate for each transmission node if the transmission is the first attempt;
@@ -135,7 +135,7 @@ end
           Phy.Ts=2000*10^(-6);
           w=p_mob(Phy.Ts,spd_set,sTxnode,x_max);
           Pk.per(Txnode)=Pk.per(Txnode)+1;
-          w=old_pos;
+          old_pos=w;
           Phy.Tc(Txnode)=Sample.Tc_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;          
           Sim.time = Sim.time + Phy.Tc(Txnode);                 % update the simulation time 
@@ -148,7 +148,7 @@ end
           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets          
           Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
           Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
-          w=old_pos;
+          old_pos=w;
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
           Sim.time= Sim.time + Phy.Ts(Txnode);            % update the simulation time 
           % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 

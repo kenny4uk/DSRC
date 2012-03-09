@@ -160,7 +160,7 @@ per_sample_iter(idx_iter)=Static.pk_per;
 pk_tx_sample_iter(idx_iter)= mean(Pk.tx);
 pk_col_sample_iter(idx_iter)=  mean(Pk.col);
 pk_suc_sample_iter(idx_iter)=  mean(Pk.suc);          
- pk_per_sampe_iter(idx_iter)=  mean(Pk.per)
+ pk_per_sampe_iter(idx_iter)=  mean(Pk.per);
  
       Static
  end

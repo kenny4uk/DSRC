@@ -29,7 +29,7 @@ while sum([Pk.suc])<=Sim.pk,
     sTxnode = length(Txnode);  % sTxnode = number of simultaneously transmitting nodes
      w=p_mob(Phy.Ts,spd_set, sTxnode,x_max);
      Pk.tx(Txnode)=Pk.tx(Txnode)+1;
-    w=old_pos;
+    old_pos=w;
     
     % we distringuish two possible events at this slot time 
     if sTxnode>1   % if sTxnode > 1 => Collision occurs
@@ -53,7 +53,7 @@ while sum([Pk.suc])<=Sim.pk,
         Phy.Ts=2000*10^(-6);
   w=p_mob(Phy.Ts,spd_set,sTxnode,x_max)
    Pk.per(Txnode)=Pk.per(Txnode)+1;
-   w=old_pos;
+   old_pos=w;
    Phy.Ts(Txnode)=(Phy.Lc_over+8*App.lave)./Rate.curr(Txnode);  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;                    
           Sim.time = Sim.time + Phy.Ts(Txnode); % update the simulation time 
@@ -64,7 +64,7 @@ while sum([Pk.suc])<=Sim.pk,
         Pk.suc(Txnode) = Pk.suc(Txnode)+1; % update number of sent packets 
         Phy.Ts=3000*10^(-6);
          w=p_mob(Phy.Ts,spd_set,sTxnode,x_max);
-          w=old_pos;
+         old_pos=w;
           Phy.Ts(Txnode)=(Phy.Ls_over+8*App.lave)./Rate.curr(Txnode);  % how long does it take to transmit it with success? 
           Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
