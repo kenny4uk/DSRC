@@ -15,13 +15,14 @@ warning off;           % some annoying, but harmless warnings
 hh=datevec(now);
 
 par_config_all;
-
+[out] =access1;
+cars=4;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1500;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=[8];     
+Sim.node_set=[4];     
 sNode=length(Sim.node_set);
- spdavg_set=[20 30 40 50 70 90 100 120];
+ spdavg_set=[20 40 60 80];
 sSpd =length(spdavg_set);
 % spd_set = zeros(sSpd, sNode);
 % for i=1:sSpd
@@ -52,8 +53,8 @@ sSnr=length(Phy.snr_set);
 
 Phy.rate_mode=[1 3 5 6 7]; 
 % Phy.rate_mode=[5]; 
-Phy.power=10^5; % normalized transmit power, 1 Watt.
-% Phy.power=40*10^(-3); % normalized transmit power in Watt.
+% Phy.power=10^5; % normalized transmit power, 1 Watt.
+Phy.power=40*10^(-3); % normalized transmit power in Watt.
 Rate.all=[3 12 18 24 27]*1e6;
 Rate.set=Rate.all;
 sRset=length(Rate.set);

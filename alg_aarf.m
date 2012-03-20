@@ -7,13 +7,18 @@ par_init;
 % Simulation stops when all packets have been transmitted. Each iteration corresponds to a transmission attempt   
 Sim.tstart = clock;
 Sim.time = 0.0;  
-% t=0;
 x_max=1000;
+cars=4;
+[out] =access1;
+ out=x_max/2;
+ ap(1)=out;
+% t=0;
+
 % spd_set=0;
 % old_pos=0;
-Phy.Ts=0;
+% Phy.Ts=0;
 % simulation time 
-spd_set = rand(1, Sim.n)*spdavg_set*0.5+spdavg_set*0.75;
+spd_set = rand(1, Sim.n)*spdavg_set*0.5+spdavg_set*0.75;% speed of each vehicle
 
 while sum([Pk.suc])<=Sim.pk,
     if (rem(sum([Pk.tx]),10000)==0) & 0,
@@ -21,15 +26,19 @@ while sum([Pk.suc])<=Sim.pk,
         disp(['Expected time to conclusion: ',num2str(round(deltaT/sum([Pk.suc])*(Sim.pk- sum([Pk.suc])))),' sec...'])
     end; % if rem...
     dt_temp = min(Mac.Bk_cnt);    % Txnode = IDs of the nodes that attempt the transmission
-    Phy.Ts=1000*10^(-6);% Time after which each vehicle waits before transmitting
-    old_pos=rand(1,Sim.n)*1000;
+    Sim.time=1000*10^(-6);% Time after which each vehicle waits before transmitting
+    old_pos=rand(2,Sim.n)*1000;
+    sNode=length(Sim.node_set);
     Txnode = find(Mac.Bk_cnt==dt_temp);  % find the time of the first transmission attempt 
     Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;    % all backoff counters are decremented 
     Sim.time= Sim.time+ dt_temp*Phy.sigma; % update the simulation time accordingly
     sTxnode = length(Txnode);  % sTxnode = number of simultaneously transmitting nodes
-     w=p_mob(Phy.Ts,spd_set, sTxnode,x_max);
+     w=rand_pos(Sim.time,spd_set,old_pos,x_max,ap,cars);
+      id=find(w);
+%       old_pos(id)=w(id);
+      old_pos=w(id);
      Pk.tx(Txnode)=Pk.tx(Txnode)+1;
-    old_pos=w;
+%     old_pos=w;
     
     % we distringuish two possible events at this slot time 
     if sTxnode>1   % if sTxnode > 1 => Collision occurs
@@ -50,21 +59,28 @@ while sum([Pk.suc])<=Sim.pk,
         St.fail(Txnode)=1; 
         St.col(Txnode)=0;
         St.per(Txnode)=1;
-        Phy.Ts=2000*10^(-6);
-  w=p_mob(Phy.Ts,spd_set,sTxnode,x_max)
+        Sim.time=2000*10^(-6);
+  w=rand_pos(Sim.time,spd_set,old_pos,x_max,ap,cars);
+   id=find(w);
+   old_pos(id)=w(id);
    Pk.per(Txnode)=Pk.per(Txnode)+1;
-   old_pos=w;
+%    old_pos=w;
    Phy.Ts(Txnode)=(Phy.Lc_over+8*App.lave)./Rate.curr(Txnode);  % how long does it take to transmit it with success? 
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;                    
           Sim.time = Sim.time + Phy.Ts(Txnode); % update the simulation time 
       else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
         St.fail(Txnode)=0; 
         St.col(Txnode)=0;
-        St.per(Txnode)=0;        
+        St.per(Txnode)=0;   
+         Sim.time=3000*10^(-6);
+         w=rand_pos(Sim.time,spd_set,old_pos,x_max,ap,cars);
+          id=find(w);
+          old_pos(id)=w(id);
         Pk.suc(Txnode) = Pk.suc(Txnode)+1; % update number of sent packets 
-        Phy.Ts=3000*10^(-6);
-         w=p_mob(Phy.Ts,spd_set,sTxnode,x_max);
-         old_pos=w;
+%         Phy.Ts=3000*10^(-6);
+%          w=p_mob(Phy.Ts,spd_set,old_pos,x_max,Txnode);
+%           id=find(w);
+%           old_pos(id)=w(id);
           Phy.Ts(Txnode)=(Phy.Ls_over+8*App.lave)./Rate.curr(Txnode);  % how long does it take to transmit it with success? 
           Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
           Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;          
