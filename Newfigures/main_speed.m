@@ -15,14 +15,15 @@ warning off;           % some annoying, but harmless warnings
 hh=datevec(now);
 
 par_config_all;
-ap(1)=150;
-ap(2)=0;
-Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
-Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
+x_max=1000;
+ap(1)=x_max/2;
+% ap(2)=x_max;
+Sim.iternum0=1; % number of iterations for a fixed simulation scenario.
+Sim.iternum1=1; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1500;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=50;     
+Sim.node_set=4;     
 sNode=length(Sim.node_set);
- spdavg_set=[20 40 60 80 100 120];
+spdavg_set=[10 15 20 25 30 40 56];% This gives a maximum speed of 56m/s which is 200km/h
 sSpd =length(spdavg_set);
 % spd_set = zeros(sSpd, sNode);
 % for i=1:sSpd

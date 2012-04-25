@@ -1,8 +1,7 @@
 function alg_sample(spdavg_set,n)
-
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
-
+global sNode;
 par_init;
 
 % parameters for algorithm Sample===================================================
@@ -21,11 +20,19 @@ Sample.rate_first_series=5; % set up the transmit rate for first serier of trans
 Sim.tstart = clock;
 Sim.time = 0.0;                  % simulation time 
 Sim.ratetime=0;
-ap(1)=150;
-  t=0;
-x_max=300;
-n=length(Sim.node_set);
- spd_set=rand(n,1)*spdavg_set*0.5+spdavg_set*0.75;% This is a 
+% Phy.Ts=0;
+t=0;
+n=Sim.node_set;
+% Sim.node_set=Sim.n;
+%  Mac.Wmin=32;
+% Mac.W=Mac.Wmin*ones(1,Sim.n);
+% Mac.Bk_cnt=   floor(Mac.Wmin*rand(1,Sim.n));
+x_max=1000;%This is the length of the high way in meters
+ap(1)=x_max/2;% This is the Road side Unit(AP) placed at the middle of the length of the road
+commRange=300;% This is the communication range for the vehicles
+% ap(2)=x_max;
+%  spd_set=rand(n,1)*spdavg_set*0.5+spdavg_set*0.75;% This is a 
+%  v=ones(1,Sim.n)*20+rand(1,Sim.n)*40%This gives the value of speed between[20-60]m/s
 Sample.t_slot = 9*10^(-6);
 Sample.t_sifs = 16*10^(-6);
 Sample.t_difs = 34*10^(-6);
@@ -37,7 +44,8 @@ Sample.frame_len=App.lave;
 Sample.avg_bk_slot(1)=Mac.Wmin/2;
 Sample.Ts_over=Sample.t_sifs+Sample.t_difs+Sample.header_duration+Sample.ack_duration;
 Sample.Tc_over=Sample.t_sifs+Sample.t_difs+Sample.header_duration+Sample.ack_duration;
-
+precommstatus=logical(zeros(1,n));
+newnode=logical(zeros(1,n));
 for ii=2:(Mac.nRetry_max+1)
   Sample.avg_bk_slot(ii)=Sample.avg_bk_slot(ii-1)+ min(Mac.Wmax, Mac.Wmin*2^(ii-1))/2;
 end
@@ -59,51 +67,63 @@ end
       if Sample.bl_debug
         disp('Start of a packet tx:'); disp(Sim.time);
       end
-      
-      dt_temp = min(Mac.Bk_cnt);                                   % Txnode = IDs of the nodes that attempt the transmission
-%   old_pos=rand(1,Sim.n)*1000;
-%     for  i=1:n
-%         for j=1:2
-%       oldp(i,j)= rand()*300;
-%         end
-%     end
-%   oldp(4,2)= rand(Sim.n,2)*300;
- t=1000*10^(-6);% Time after which each vehicle waits before transmitting
-%  [w,w1,w2]=range(spd_set ,t,x_max,ap,n,oldp );
-    Txnode = find(Mac.Bk_cnt==dt_temp);                % find the time of the first transmission attempt
-%       [w1,w2] = find(Mac.Bk_cnt==dt_temp);  % find the time of the first transmission attempt 
-      Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;                   % all backoff counters are decremented 
-      Sim.time = Sim.time+ dt_temp*Sample.t_slot;       % update the simulation time accordingly
-        sTxnode = length(Txnode);                                       % sTxnode = number of simultaneously transmitting nodes
-       [w w1]=mob_model(t,v,old_pos,ap,n,x_max)
-         Pk.tx(Txnode)=Pk.tx(Txnode)+1;
-   
-%        w=p_mob(Sim.time,spd_set,old_pos,x_max,Txnode);%Phy.Ts
-       
-%        w=range(spd_set ,Sim.time,x_max,ap,n,oldp );
-       id=find(w);
-%       old_pos(id)=w(id);
-      oldp(id)=w(id);
-      
-      Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1; 
-       
-      
+   n=Sim.node_set;
+spdavg_set=[10 15 20 25 30 40 56];%average speed set in m/s
+sSpd =length(spdavg_set);
+for i=1:sSpd
+ v=rand(1,n)*spdavg_set(i)*0.5+spdavg_set(i)*0.75;% vechicles selects speed uniformly
+end
+% Phy.Ts=0.1; %time of transmission at 0.1seconds
+t=0.1;
+old_pos=rand(1,n)*1000;% Random positions of nodes are generated
+[d,w,w1]=mob_model(t,v,old_pos,ap,commRange,n,x_max);
+commstatus=logical(w1);
+for j=1:n
+%     idn=commnode(j);
+    if commstatus(j)==1&& precommstatus(j)==0
+        newnode(j)=1;
+    else
+        newnode(j)=0;
+        
+    end
+end
+nwnode=length(find(newnode==1));% This are the number of nodes that just entered the communication range
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%DEBUG
+disp(['commstatus is=',num2str(commstatus)]);
+disp(['nwnode is=',num2str(nwnode)]);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%DEBUG
+ precommstatus= commstatus;
+ commnode=find(w1==1);% This finds the nodes that are in communication range
+Nnode=length(commnode);% This are the nodes that are in communication range
+
+% x= Mac.Bk_cnt;
+% [z]=bkt_count( x,commstatus);
+% Mac.W( newnode)= Mac.Wmin;
+% Mac.Bk_cnt(newnode)=floor(Mac.Wmin   *rand()); 
+dt_temp = min(Mac.Bk_cnt(commstatus));
+% Txnode = find(Mac.Bk_cnt(commstatus)==dt_temp);%Txnode = IDs of the nodes that attempt the transmission
+Txnode = find( Mac.Bk_cnt(commstatus)==dt_temp);%Txnode = IDs of the nodes that attempt the transmission
+Mac.Bk_cnt=Mac.Bk_cnt-dt_temp-1;    % all backoff counters are decremented
+Sim.time = Sim.time+ dt_temp*Sample.t_slot;  % update the simulation time accordingly
+sTxnode=length(Txnode);
+Pk.tx(Txnode)=Pk.tx(Txnode)+1;
+ Onoe.win_tx_all(Txnode)=Onoe.win_tx_all(Txnode)+1;   
+old_pos=w;
       % find rate for each transmission node if the transmission is the first attempt;
+    
       for ii=1:sTxnode
         node_id=Txnode(ii);
-        
         Sstats.last_tx_suc(node_id)=0;        
         Sstats.last_tx_tries(node_id)=Sstats.last_tx_tries(node_id)+ 1;          
         Sstats.last_tx_frame_len(node_id, Sstats.last_tx_tries(node_id))=App.lave;                
         Sstats.last_tx_rts_enabled(node_id, Sstats.last_tx_tries(node_id))=0;
-        
-        if Sstats.last_tx_tries(node_id)==1
+      if Sstats.last_tx_tries(node_id)==1
           find_rate(node_id, App.lave);
           Sstats.last_tx_tries(node_id)=1;
         end
       end % for ii=1:sTxnode
       Sstats.packets_total=Sstats.packets_total+ sTxnode;
-      
+     
       % we distinguish two possible events at this slot time 
       temp_rate=zeros(1,Sim.n);
       temp_rate_idx=zeros(1,Sim.n);
@@ -120,15 +140,15 @@ end
         St.col(Txnode)=1;
 %         St.col([w1,w2])=1;
         Pk.col(Txnode)= Pk.col(Txnode)+ 1;     % total number of collided packets is updated;
-%         Pk.col([w1,w2])= Pk.col([w1,w2])+ 1;     % total number of collided packets is updated;
-  
+%         Mac.Bk_cnt=floor(2*Mac.Wmin*rand());% contention window is doubled when there is collission
         Phy.Tc(Txnode)=Sample.Tc_over+ 8*App.lave./temp_rate(Txnode);
 %         Phy.Tc([w1,w2])=Sample.Tc_over+ 8*App.lave./temp_rate([w1,w2]);
         Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;
 %         Pk.power([w1,w2])=Pk.power([w1,w2])+Phy.Tc([w1,w2])*Phy.power;
-        maxTc=max(Phy.Tc(Txnode));                  % we need to know how long the collision is going to last
-%         maxTc=max(Phy.Tc([w1,w2]));                  % we need to know how long the collision is going to last
-        Sim.time= Sim.time + maxTc;                   % and update the simulation time subsequently
+        maxTc=max(Phy.Tc(Txnode));    % we need to know how long the collision is going to last
+%         maxTc=max(Phy.Tc([w1,w2])); % we need to know how long the collision is going to last
+
+        Sim.time= Sim.time + maxTc; % and update the simulation time subsequently
       elseif sTxnode==1
         % process BER and check if pkt can be accepted due to ber.
         if 0 %temp_rate(Txnode)>5 
@@ -152,45 +172,29 @@ end
           St.fail(Txnode)=1;
           St.col(Txnode)=0;
           St.per(Txnode)=1;
-       
-          t=2000*10^(-6);
-%           w= p_mob(Sim.time,spd_set,old_pos,x_max,Txnode);
-        w=range(spd_set ,t,x_max,ap,n,oldp );
-          id=find(w);
+       %           t=0.3;
+%           w=mob_model(t,v,old_pos,ap,n,x_max);
+%           id=find(w);
 %           old_pos(id)=w(id);
-          oldp(id)=w(id);
-          Pk.per(Txnode)=Pk.per(Txnode)+1;
-          
-%           old_pos=w;
-          Phy.Tc(Txnode)=Sample.Tc_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success? 
-          Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power; 
-          Sim.time = Sim.time + Phy.Tc(Txnode);                 % update the simulation time 
+      Pk.per(Txnode)=Pk.per(Txnode)+1;
+     Phy.Tc(Txnode)=Sample.Tc_over+8*App.lave./temp_rate(Txnode); % how long does it take to transmit it with success? 
+     Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power; 
+     Sim.time = Sim.time + Phy.Tc(Txnode); % update the simulation time 
           
         else   % if sTxnode == 1 & Bper==0 => Successfull transmission occurs
           St.fail(Txnode)=0; 
           St.col(Txnode)=0;
           St.per(Txnode)=0;
-          t=3000*10^(-6);
-%           w=p_mob(Sim.time,spd_set,old_pos,x_max,Txnode);
-         w=range(spd_set ,t,x_max,ap,n,oldp );
-           id=find(w);
-%            old_pos(id)=w(id);
-           oldp(id)=w(id);
-           Pk.suc(Txnode)= Pk.suc(Txnode)+1;           % update number of sent packets 
-          
-          Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);                  % how long does it take to transmit it with success?
-          
-          Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
-         
-%           old_pos=w;
-          Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;
-         
-          Sim.time= Sim.time + Phy.Ts(Txnode);            % update the simulation time
+%       Mac.Bk_cnt=floor(Mac.Wmin*rand());% contention window is reset to minimum value
+   Pk.suc(Txnode)= Pk.suc(Txnode)+1;% update number of sent packets 
+    Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);  % how long does it take to transmit it with success?
+    Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
+    Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;
+     Sim.time= Sim.time + Phy.Ts(Txnode); % update the simulation time
           
           % ws(Pksuc) = Sim.time-birthtime(Txnode); % compute the service time of this packet 
-          App.birthtime(Txnode)= Sim.time;                    % and store the time this packet entered service
-          
-          Sstats.last_tx_suc(Txnode)=1; % record the success of this transmission.
+     App.birthtime(Txnode)= Sim.time; % and store the time this packet entered service
+     Sstats.last_tx_suc(Txnode)=1; % record the success of this transmission.
         end; % if Bper
       end % if sTxnode>1
 
@@ -228,6 +232,8 @@ end
             else
                 Mac.W(iTx)=min(Mac.Wmin*2^Mac.nRetry(iTx), Mac.Wmax);
                 Mac.Bk_cnt(iTx)=floor(rand()*Mac.W(iTx));
+              
+                
             end % if Mac.nRetry>Ret_thr
         end
 
@@ -236,11 +242,11 @@ end
              Mac.nRetry(iTx)=0;
              Mac.W(iTx)=Mac.Wmin;
              Mac.Bk_cnt(iTx)=floor(rand()*Mac.W(iTx));
-
              Sstats.tx_frame_len(iTx)=Sample.frame_len;  % here we use fixed frame length temporaly.
              Sstats.last_tx_tries(iTx)=0;             
             else
-                Mac.Bk_cnt(iTx)=10^20;
+           Mac.Bk_cnt(iTx)=10^20;
+          
             end
         end % if check_more_pk
 
