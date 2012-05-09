@@ -18,10 +18,10 @@ par_config_all;
 x_max=1000;
 ap(1)=x_max/2;
 % ap(2)=x_max;
-Sim.iternum0=1; % number of iterations for a fixed simulation scenario.
-Sim.iternum1=1; % number of iterations for a fixed simulation scenario.
+Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
+Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1500;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=4;     
+Sim.node_set=100;     
 sNode=length(Sim.node_set);
 spdavg_set=[10 15 20 25 30 40 56];% This gives a maximum speed of 56m/s which is 200km/h
 sSpd =length(spdavg_set);
@@ -38,7 +38,7 @@ Sim.cal_aarf=1;
 % Sim.cal_onoe=1;
 % Sim.debug_onoe_sim=0;
 % Sim.debug_onoe_mod=0;
-Sim.cal_sample=1;
+Sim.cal_sample=1;   
 Sim.debug_sample_sim=1;
 
 matname= [num2str(hh(1)) '-' num2str(hh(2)) '-'  num2str(hh(3)) '-'  num2str(hh(4)) '-'  num2str(hh(5))  '-linkadapt'] ;
@@ -105,7 +105,7 @@ Phy.snr=Phy.snr_set(idx_snr);
 Phy.snr_per= snr_per(Phy.snr, Phy.rate_mode);
 
   % if Startrate_mode(idx_start)>0; iter_num=1; else; iter_num= Sim.iternum; end;
-  if Startrate_mode(idx_start)>0; iter_num=Sim.iternum1; else; iter_num= Sim.iternum0; end;  
+ if Startrate_mode(idx_start)>0; iter_num=Sim.iternum1; else; iter_num= Sim.iternum0; end;  
 
  thr_sample_iter=zeros(1, iter_num);
  eneff_sample_iter=zeros(1,iter_num);
@@ -130,17 +130,17 @@ for idx_iter=1: iter_num
    curr_time=datevec(now);
   disp(['current time is: ' num2str(curr_time(2)) '-'  num2str(curr_time(3)) '-'  num2str(curr_time(4)) '-'  num2str(curr_time(5))]);
   disp(['number of packets to be simulated: ' num2str(Sim.pk)]); 
- if Startrate_mode(idx_start)==0
-  Rate.level_start= max(1, ceil(rand(1,Sim.n)*sRset));            
-   Rate.start=Rate.set(Rate.level_start);  
-          Rate.startrate_prob=ones(1,Rate.num)/Rate.num;          
-      else
-       Rate.level_start= Startrate_mode(idx_start)* ones(1,Sim.n);
-       Rate.start=Rate.set(Rate.level_start);  
-       Rate.startrate_prob=zeros(1,Rate.num); Rate.startrate_prob(Startrate_mode(idx_start))=1;
+if Startrate_mode(idx_start)==0
+    Rate.level_start= max(1, ceil(rand(1,Sim.n)*sRset));            
+    Rate.start=Rate.set(Rate.level_start);  
+    Rate.startrate_prob=ones(1,Rate.num)/Rate.num;          
+  else
+    Rate.level_start= Startrate_mode(idx_start)* ones(1,Sim.n);
+    Rate.start=Rate.set(Rate.level_start);  
+    Rate.startrate_prob=zeros(1,Rate.num); Rate.startrate_prob(Startrate_mode(idx_start))=1;
   end
-           
-      if Sim.cal_sample
+          
+ if Sim.cal_sample
         if idx_start>1 | idx_period>1; continue; end;
         
           disp('---------------------------------------------------------------')
@@ -166,7 +166,7 @@ pk_suc_sample_iter(idx_iter)=  mean(Pk.suc);
  
       Static
  end
-       if Sim.cal_aarf
+if Sim.cal_aarf
           disp('---------------------------------------------------------------')
           disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
               ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
