@@ -43,5 +43,5 @@ pbPktDropped = commRange * (d(ii+1) - d(ii));
 % Predicted PER = probability of packet reaching to a car, with relative speed s * probability of packet getting dropped
 % due to longer distance between the cars
 % PER = pbPkt + pbPktDropped;
-PER = pbPkt + pbPktDropped;
+PER = pbPkt * pbPktDropped;
 % %     count = count + 1;
