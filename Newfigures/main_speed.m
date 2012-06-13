@@ -21,10 +21,10 @@ ap(1)=x_max/2;
 Sim.iternum0=4; % number of iterations for a fixed simulation scenario.
 Sim.iternum1=4; % number of iterations for a fixed simulation scenario.
 Sim.pk_basic=1500;     % Total number of packets to be successfully sent per simulation
-Sim.node_set=10;    % number of Vehicles,    AP is the rcvr!
+Sim.node_set=200;    % number of Vehicles,    AP is the rcvr!
 sNode=length(Sim.node_set);
 % spdavg_set=[10 15 20 25 30 40 56];% This gives a maximum speed of 56m/s which is 200km/h
-spdavg_set=[1:5:56];% This gives a maximum speed of 56m/s which is 200km/h
+spdavg_set=[1:5:100];% This gives a maximum speed of 56m/s which is 200km/h
 sSpd =length(spdavg_set);
 % spd_set = zeros(sSpd, sNode);
 % for i=1:sSpd
@@ -42,7 +42,7 @@ Sim.cal_aarf=1;
 Sim.cal_sample=1;
 
 %%% ADD -- to run CAARS set = 1
-Sim.cal_caars = 1;
+% Sim.cal_caars = 1;
 %%%%
 Sim.debug_sample_sim=1;
 
@@ -113,11 +113,6 @@ for idx_spd=1:sSpd
                     if Startrate_mode(idx_start)>0; iter_num=Sim.iternum1; else; iter_num= Sim.iternum0; end;
                     
                     thr_sample_iter=zeros(1, iter_num);
-                    
-                    %%% ADD -- to get throughput of CARS
-                    thr_cars_iter = zeros(1, iter_num);
-                    %%%
-                    
                     eneff_sample_iter=zeros(1,iter_num);
                     col_sample_iter=zeros(1, iter_num);
                     suc_sample_iter=zeros(1, iter_num);%   thr_aarf_iter=zeros(1, iter_num);
@@ -176,23 +171,7 @@ for idx_spd=1:sSpd
                             
 
                         end
-                        
-                        %%% ADD -- CAARS implementation .
-                        if Sim.cal_caars
-                            if idx_start > 1 | idx_period > 1 ; continue ; end;
-                            disp('---------------------------------------------------------------')
-                            %           curr_time=datevec(now);
-                            %           disp(['current time is: ' num2str(curr_time(2)) '-'  num2str(curr_time(3)) '-'  num2str(curr_time(4)) '-'  num2str(curr_time(5))]);
-                            disp(['Simulation CAARS: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
-                                ' is running iteration ' num2str(idx_iter) '. Please be patient...']);  % Just in case
-                            
-                            S = 30 ; % speed Normalizer
-                            alpha = max(0,min(1,spdavg_set(idx_spd)/S));
-                            throughCAARS = alg_CAARS(spdavg_set(idx_spd), alpha, Sim.node_set, Static.through);
-                            thr_caars_iter(idx_iter) = throughCAARS;
-                        end
-                        %%%%%%%%
-                        
+                                                
                         
                         if Sim.cal_aarf
                             disp('---------------------------------------------------------------')
@@ -263,13 +242,7 @@ for idx_spd=1:sSpd
                         disp(['Simulation AARF: n=',num2str(Sim.n),', snr=',num2str(Phy.snr) ', startrate=' num2str(Startrate_mode(idx_start)) ...
                             ', throughput=', num2str(mean(thr_aarf_iter))]);  % Just in case
                     end
-                    
-                    %%% ADD - stroing mean result 
-                     if Sim.cal_caars
-                          thr_caars(idx_spd,idx_node,idx_snr,idx_start,idx_period)= mean(thr_caars_iter); 
-                     end
-                    %%%%% 
-                     
+                                      
                 end %for idx_period
             end % for idx_start
         end% for idx_snr

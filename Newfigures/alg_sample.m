@@ -4,7 +4,7 @@ function alg_sample(spdavg_set,n)
 global Sim App Mac Phy Rate Arf Onoe Sstats Sample;
 global Pk St Trace_sample Static;
 global sNode;
-par_init;
+Par_init;
 
 % parameters for algorithm Sample===================================================
 Sample.bl_debug= 0;
@@ -63,7 +63,8 @@ while sum([Pk.suc])<=Sim.pk,
         disp('Start of a packet tx:'); disp(Sim.time);
     end
     n=Sim.node_set;
-    spdavg_set=[10 15 20 25 30 40 56];%average speed set in m/s
+%     spdavg_set=[10 15 20 25 30 40 56];%average speed set in m/s
+    spdavg_set=[1:5:100];% This gives a maximum speed of 56m/s which is 200km/h
     sSpd =length(spdavg_set);
     for i=1:sSpd
         v=rand(1,n)*spdavg_set(i)*0.5+spdavg_set(i)*0.75;% vechicles selects speed uniformly
@@ -87,7 +88,6 @@ while sum([Pk.suc])<=Sim.pk,
     pre_commstatus= comm_status;
     commnode=find(w1==1);% This finds the nodes that are in communication range
     Nnode=length(commnode);% This are the nodes that are in communication range
-    
     dt_temp = min(Mac.Bk_cnt);% minimum value of  first transmission attempt
     Txnode = find(Mac.Bk_cnt(comm_status)==dt_temp);% find time of first transmission attempt
     %Txnode = IDs of the nodes that attempt the transmission
@@ -122,17 +122,17 @@ while sum([Pk.suc])<=Sim.pk,
         temp_rate(Txnode(ii))=Sample.rates(Sstats.last_tx_rate(Txnode(ii), Sstats.last_tx_tries(Txnode(ii))))*10^6;
         Rate.level(Txnode(ii))=temp_rate_idx(Txnode(ii));
     end
-    if sTxnode>1        % if sTxnode > 1 => Collision occurs
+        if sTxnode>1        % if sTxnode > 1 => Collision occurs
         St.fail(Txnode)=1;
         St.col(Txnode)=1;
-        v=30;
+        v(i)=10;
         t=0.02;
         old_pos(Txnode)=w(Txnode);
-        Pk.col(Txnode) = Pk.col(Txnode)+w1(Txnode)+1;     % total number of collided packets is updated;
+        Pk.col(Txnode) = Pk.col(Txnode)+w(Txnode)+1;     % total number of collided packets is updated;
         Phy.Tc(Txnode)=Sample.Tc_over+ 8*App.lave./temp_rate(Txnode);
         Pk.power(Txnode)=Pk.power(Txnode)+Phy.Tc(Txnode)*Phy.power;
         maxTc=max(Phy.Tc(Txnode));    % we need to know how long the collision is going to last
-        Sim.time= Sim.time + maxTc+t; % and update the simulation time subsequently
+        Sim.time= Sim.time + maxTc; % and update the simulation time subsequently
     elseif sTxnode==1
         % process BER and check if pkt can be accepted due to ber.
         if 0 %temp_rate(Txnode)>5
@@ -154,7 +154,11 @@ while sum([Pk.suc])<=Sim.pk,
             St.fail(Txnode)=1;
             St.col(Txnode)=0;
             St.per(Txnode)=1;
-            %           t=0.03;
+            
+            % to test for packet corruption, that is when node is far away
+            % from AP and no collission
+            v(i)=20;
+            t=0.03;
             old_pos(Txnode)=w(Txnode);
             Pk.per(Txnode)=Pk.per(Txnode)+1;
             Phy.Tc(Txnode)=Sample.Tc_over+8*App.lave./temp_rate(Txnode); % how long does it take to transmit it with success?
@@ -166,7 +170,7 @@ while sum([Pk.suc])<=Sim.pk,
             St.per(Txnode)=0;
             %               t=0.04;
             %       Mac.Bk_cnt=floor(Mac.Wmin*rand());% contention window is reset to minimum value
-            Pk.suc(Txnode)= Pk.suc(Txnode)+w1(Txnode)+1;% update number of sent packets
+            Pk.suc(Txnode)= Pk.suc(Txnode)+w(Txnode)+1;% update number of sent packets
             Phy.Ts(Txnode)=Sample.Ts_over+8*App.lave./temp_rate(Txnode);  % how long does it take to transmit it with success?
             Pk.bit(Txnode)=Pk.bit(Txnode)+8*App.lave;
             Pk.power(Txnode)=Pk.power(Txnode)+Phy.Ts(Txnode)*Phy.power;
